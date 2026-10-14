@@ -1,1049 +1,525 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Авито Учет" />
-  <meta name="theme-color" content="#F2F2F7" />
-  <title>Авито Учет — Юнит-экономика и Продажи</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --safe-top: env(safe-area-inset-top, 20px);
-      --safe-bottom: env(safe-area-inset-bottom, 20px);
-    }
-    * {
-      -webkit-tap-highlight-color: transparent;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-      background-color: #F2F2F7;
-      color: #1C1C1E;
-      margin: 0;
-      padding: 0;
-      overscroll-behavior-y: none;
-      -webkit-font-smoothing: antialiased;
-    }
-    .safe-header {
-      padding-top: calc(var(--safe-top) + 10px);
-    }
-    .safe-bottom-nav {
-      padding-bottom: calc(var(--safe-bottom) + 6px);
-    }
-    .main-scroll {
-      padding-bottom: calc(var(--safe-bottom) + 96px);
-    }
-    .ios-card {
-      background: #FFFFFF;
-      border-radius: 18px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-    }
-    .ios-glass {
-      background: rgba(255, 255, 255, 0.86);
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-    }
-    .ios-input {
-      background: #F2F2F7;
-      border: 1.5px solid transparent;
-      border-radius: 12px;
-      padding: 11px 14px;
-      font-size: 16px;
-      font-weight: 500;
-      width: 100%;
-      color: #1C1C1E;
-      transition: all 0.15s ease;
-      outline: none;
-    }
-    .ios-input:focus {
-      background: #FFFFFF;
-      border-color: #007AFF;
-      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
-    }
-    input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      background: #E5E5EA;
-      border-radius: 999px;
-      outline: none;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #007AFF;
-      box-shadow: 0 2px 6px rgba(0, 122, 255, 0.35);
-      cursor: pointer;
-      border: 2px solid #FFFFFF;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .active-scale:active {
-      transform: scale(0.97);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Авито Учет — Посуда</title>
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #cbd5e1;
+    --primary: #2563eb;
+    --green: #059669;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 0 0 40px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); font-size: 15px;
+  }
+  header {
+    background: #0f172a; color: #fff; padding: 12px 16px;
+    position: sticky; top: 0; z-index: 30;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .logo { font-size: 18px; font-weight: 800; }
+  .badge-return {
+    background: #f59e0b; color: #000; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px; display: none;
+  }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tab-btn {
+    background: #1e293b; color: #cbd5e1; border: none; border-radius: 8px;
+    padding: 9px 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .tab-btn.active { background: var(--primary); color: #fff; }
+  .container { max-width: 900px; margin: 14px auto; padding: 0 12px; }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 14px;
+    border: 1px solid #e2e8f0;
+  }
+  h2 { margin: 0 0 12px 0; font-size: 17px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  input, select {
+    width: 100%; padding: 10px 12px; font-size: 16px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: #fff; color: var(--text); outline: none;
+  }
+  input:focus, select:focus { border-color: var(--primary); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .channel-switch {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 14px;
+  }
+  .ch-btn {
+    border: none; padding: 10px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; background: transparent; color: #475569;
+  }
+  .ch-btn.active { background: var(--primary); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+  .search-wrap { position: relative; margin-bottom: 14px; }
+  .dropdown {
+    position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+    border: 1px solid var(--border); border-radius: 10px; max-height: 220px;
+    overflow-y: auto; z-index: 40; box-shadow: 0 8px 20px rgba(0,0,0,0.12); display: none;
+  }
+  .drop-item {
+    padding: 10px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .drop-item:active { background: #eff6ff; }
+  .sku-tag {
+    background: #e2e8f0; color: #334155; font-size: 11px; font-weight: 700;
+    padding: 2px 6px; border-radius: 5px; margin-right: 6px;
+  }
+  .cart-item {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 10px; margin-bottom: 8px;
+  }
+  .cart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; }
+  .btn-del { background: none; border: none; color: var(--red); font-size: 18px; font-weight: 800; padding: 0 6px; }
+  .summary-box {
+    background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px;
+    padding: 12px; margin-top: 12px;
+  }
+  .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 13px; margin-bottom: 8px; }
+  .profit-line { font-size: 18px; font-weight: 800; color: var(--green); border-top: 1px solid #a7f3d0; padding-top: 8px; }
+  .btn-main {
+    width: 100%; background: var(--green); color: #fff; border: none;
+    padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700;
+    margin-top: 12px; cursor: pointer;
+  }
+  .btn-blue { background: var(--primary); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: #fff; border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; }
+  .stat-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+  .stat-val { font-size: 20px; font-weight: 800; margin-top: 4px; }
+  .order-card { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
+  .order-card:last-child { border-bottom: none; }
+  .hidden { display: none !important; }
+</style>
 </head>
-<body class="min-h-screen select-none">
+<body>
 
-  <!-- ВЕРХНЯЯ ПАНЕЛЬ iOS -->
-  <header class="ios-glass sticky top-0 z-30 border-b border-gray-200/70 safe-header pb-3 px-4">
-    <div class="max-w-md mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-emerald-400 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-          А
-        </div>
-        <div>
-          <h1 class="text-lg font-bold tracking-tight leading-none text-gray-900">Авито Учет</h1>
-          <p id="header-subtitle" class="text-xs text-gray-500 mt-0.5">Юнит-экономика и продажи</p>
-        </div>
+<header>
+  <div class="header-top">
+    <div class="logo">📦 Авито Учет</div>
+    <div id="returnBadge" class="badge-return"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" id="t-sale" onclick="openTab('sale')">➕ Продажа</button>
+    <button class="tab-btn" id="t-stats" onclick="openTab('stats')">📊 Статистика</button>
+    <button class="tab-btn" id="t-prods" onclick="openTab('prods')">🏷️ Товары</button>
+  </div>
+</header>
+
+<div class="container">
+  <div id="sec-sale">
+    <div class="card">
+      <div class="channel-switch">
+        <button type="button" id="ch-avito" class="ch-btn active" onclick="setChannel('avito')">🚚 Авито Доставка</button>
+        <button type="button" id="ch-pickup" class="ch-btn" onclick="setChannel('pickup')">🤝 Самовывоз</button>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="openNewCalculator()" class="active-scale bg-blue-600 text-white text-xs font-semibold px-3.5 py-2 rounded-full shadow-sm flex items-center gap-1">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-          Товар
-        </button>
+      <div class="search-wrap">
+        <label>Поиск товара (артикул или название)</label>
+        <input type="text" id="searchInp" placeholder="Начни вводить..." oninput="showSearch()" onfocus="showSearch()" autocomplete="off">
+        <div id="searchDrop" class="dropdown"></div>
       </div>
+      <div id="cartList"></div>
+      <div class="row">
+        <div><label>Комиссия Авито (%)</label><input type="number" step="0.1" id="commPct" placeholder="0" oninput="calcByPct()"></div>
+        <div><label>Комиссия в рублях (₽)</label><input type="number" step="1" id="commRub" placeholder="Сумма ₽" oninput="calcByRub()"></div>
+      </div>
+      <div class="row">
+        <div><label>Доставка с меня (₽)</label><input type="number" step="1" id="delivRub" placeholder="0" oninput="recalcOrder()"></div>
+        <div><label>Упаковка: зип/пупырка (₽)</label><input type="number" step="1" id="packRub" placeholder="0" oninput="recalcOrder()"></div>
+      </div>
+      <div class="row">
+        <div><label>Статус заказа</label><select id="ordStatus"><option value="shipping">🚚 В доставке</option><option value="completed">✅ Деньги получены</option></select></div>
+        <div><label>Заметка (необязательно)</label><input type="text" id="ordNote" placeholder="ПВЗ / Имя"></div>
+      </div>
+      <div class="summary-box">
+        <div class="sum-grid">
+          <div>Выручка: <b id="sumRev">0 ₽</b></div>
+          <div>Закуп: <b id="sumBuy">0 ₽</b></div>
+          <div style="grid-column: span 2; color: var(--red);">Удержания (ком. + дост. + упак.): <b id="sumFees">0 ₽</b></div>
+        </div>
+        <div class="profit-line">Чистая прибыль: <span id="sumProfit">0 ₽</span></div>
+      </div>
+      <button class="btn-main" onclick="saveOrder()">💾 Сохранить заказ</button>
     </div>
-  </header>
+  </div>
 
-  <!-- ОСНОВНОЙ КОНТЕНТ -->
-  <main class="max-w-md mx-auto px-4 pt-4 main-scroll">
-
-    <!-- ВКЛАДКА 1: СВОДКА -->
-    <section id="tab-dashboard" class="space-y-4">
-      <!-- Фильтр статуса для сводки -->
-      <div class="flex bg-gray-200/80 p-1 rounded-xl text-xs font-semibold">
-        <button onclick="setDashFilter('all')" id="df-all" class="flex-1 py-1.5 rounded-lg transition-all">Все</button>
-        <button onclick="setDashFilter('deals')" id="df-deals" class="flex-1 py-1.5 rounded-lg transition-all">Сделки</button>
-        <button onclick="setDashFilter('sold')" id="df-sold" class="flex-1 py-1.5 rounded-lg transition-all">Продано</button>
-        <button onclick="setDashFilter('active')" id="df-active" class="flex-1 py-1.5 rounded-lg transition-all">В продаже</button>
-      </div>
-
-      <!-- Главная карточка прибыли -->
-      <div class="ios-card p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white relative overflow-hidden">
-        <div class="flex items-start justify-between">
-          <div>
-            <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Чистая прибыль</span>
-            <div id="dash-net-profit" class="text-3xl font-extrabold tracking-tight mt-1">0 ₽</div>
-          </div>
-          <span id="dash-margin-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-            Маржа 0%
-          </span>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-white/10 text-left">
-          <div>
-            <div class="text-[11px] text-slate-400">Выручка</div>
-            <div id="dash-revenue" class="text-sm font-bold mt-0.5">0 ₽</div>
-          </div>
-          <div>
-            <div class="text-[11px] text-slate-400">ROI закупки</div>
-            <div id="dash-roi" class="text-sm font-bold mt-0.5 text-emerald-300">0%</div>
-          </div>
-          <div>
-            <div class="text-[11px] text-slate-400">Позиций</div>
-            <div id="dash-count" class="text-sm font-bold mt-0.5">0 шт.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Структура выручки и расходов Авито -->
-      <div class="ios-card p-4 space-y-3.5">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-gray-900">Распределение выручки</h2>
-          <span id="dash-total-expenses" class="text-xs font-semibold text-gray-500">Расходы: 0 ₽</span>
-        </div>
-
-        <!-- Прогресс-бар структуры -->
-        <div class="h-3 w-full rounded-full bg-gray-100 overflow-hidden flex gap-0.5 p-0.5" id="dash-bar">
-          <div id="bar-cost" class="h-full bg-slate-500 transition-all duration-300 rounded-l-full" style="width: 25%"></div>
-          <div id="bar-comm" class="h-full bg-amber-500 transition-all duration-300" style="width: 10%"></div>
-          <div id="bar-deliv" class="h-full bg-purple-500 transition-all duration-300" style="width: 5%"></div>
-          <div id="bar-clicks" class="h-full bg-sky-500 transition-all duration-300" style="width: 10%"></div>
-          <div id="bar-profit" class="h-full bg-emerald-500 transition-all duration-300 rounded-r-full" style="width: 50%"></div>
-        </div>
-
-        <!-- Детализация по статьям -->
-        <div class="grid grid-cols-2 gap-2.5 pt-1">
-          <div class="bg-gray-50 rounded-xl p-3">
-            <div class="flex items-center gap-1.5 text-xs text-gray-500">
-              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>Закупка товара
-            </div>
-            <div id="dash-cost" class="text-base font-bold text-gray-900 mt-1">0 ₽</div>
-            <div id="dash-cost-pct" class="text-[11px] text-gray-400">0% от выручки</div>
-          </div>
-
-          <div class="bg-gray-50 rounded-xl p-3">
-            <div class="flex items-center gap-1.5 text-xs text-gray-500">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Комиссия Авито
-            </div>
-            <div id="dash-comm" class="text-base font-bold text-gray-900 mt-1">0 ₽</div>
-            <div id="dash-comm-pct" class="text-[11px] text-gray-400">0% от выручки</div>
-          </div>
-
-          <div class="bg-gray-50 rounded-xl p-3">
-            <div class="flex items-center gap-1.5 text-xs text-gray-500">
-              <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>Доставка Авито
-            </div>
-            <div id="dash-deliv" class="text-base font-bold text-gray-900 mt-1">0 ₽</div>
-            <div id="dash-deliv-pct" class="text-[11px] text-gray-400">Упаковка и скидка</div>
-          </div>
-
-          <div class="bg-gray-50 rounded-xl p-3">
-            <div class="flex items-center gap-1.5 text-xs text-gray-500">
-              <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>Клики (CPC)
-            </div>
-            <div id="dash-clicks-cost" class="text-base font-bold text-gray-900 mt-1">0 ₽</div>
-            <div id="dash-clicks-info" class="text-[11px] text-gray-400">0 кликов (ср. 0 ₽)</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Группы маржинальности (быстрый переход) -->
-      <div class="ios-card p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold text-gray-900">Группы маржинальности</h2>
-          <span class="text-[11px] text-gray-400">Нажмите для фильтра</span>
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="jumpToMarginFilter('high')" class="active-scale bg-emerald-50 border border-emerald-200/70 rounded-xl p-2.5 text-left">
-            <div class="text-[11px] font-bold text-emerald-700">Высокая ≥22%</div>
-            <div id="mgroup-high" class="text-lg font-extrabold text-emerald-900 mt-0.5">0</div>
-            <div class="text-[10px] text-emerald-600">товаров</div>
-          </button>
-          <button onclick="jumpToMarginFilter('mid')" class="active-scale bg-amber-50 border border-amber-200/70 rounded-xl p-2.5 text-left">
-            <div class="text-[11px] font-bold text-amber-700">Средняя 10–21%</div>
-            <div id="mgroup-mid" class="text-lg font-extrabold text-amber-900 mt-0.5">0</div>
-            <div class="text-[10px] text-amber-600">товаров</div>
-          </button>
-          <button onclick="jumpToMarginFilter('low')" class="active-scale bg-rose-50 border border-rose-200/70 rounded-xl p-2.5 text-left">
-            <div class="text-[11px] font-bold text-rose-700">Низкая &lt;10%</div>
-            <div id="mgroup-low" class="text-lg font-extrabold text-rose-900 mt-0.5">0</div>
-            <div class="text-[10px] text-rose-600">товаров</div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Управление данными / Резервная копия -->
-      <div class="ios-card p-4 space-y-3">
-        <h2 class="text-sm font-bold text-gray-900">Резервная копия базы</h2>
-        <p class="text-xs text-gray-500 leading-relaxed">
-          Данные автоматически сохраняются на вашем iPhone. Вы можете сохранить резервную копию в файл или загрузить её обратно.
-        </p>
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button onclick="exportData()" class="active-scale bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-            Скачать базу
-          </button>
-          <label class="active-scale bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer">
-            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
-            Загрузить JSON
-            <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)" />
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <!-- ВКЛАДКА 2: СПИСОК ТОВАРОВ -->
-    <section id="tab-products" class="space-y-3.5 hidden">
-      <!-- Поиск и сортировка -->
-      <div class="ios-card p-3 space-y-2.5">
-        <div class="relative">
-          <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
-          <input type="text" id="search-input" oninput="renderProducts()" placeholder="Поиск товара или категории..." class="ios-input pl-9 py-2 text-sm" />
-        </div>
-
-        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-          <button onclick="setListStatusFilter('all')" id="lsf-all" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Все</button>
-          <button onclick="setListStatusFilter('active')" id="lsf-active" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">В продаже</button>
-          <button onclick="setListStatusFilter('shipping')" id="lsf-shipping" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Доставка</button>
-          <button onclick="setListStatusFilter('sold')" id="lsf-sold" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Продано</button>
-        </div>
-
-        <div class="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
-          <div class="flex items-center gap-1">
-            <span class="text-gray-400">Маржа:</span>
-            <select id="margin-filter-select" onchange="renderProducts()" class="bg-transparent font-semibold text-blue-600 outline-none">
-              <option value="all">Любая</option>
-              <option value="high">Высокая (≥22%)</option>
-              <option value="mid">Средняя (10–21%)</option>
-              <option value="low">Низкая (&lt;10%)</option>
-            </select>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="text-gray-400">Сортировка:</span>
-            <select id="sort-select" onchange="renderProducts()" class="bg-transparent font-semibold text-gray-800 outline-none">
-              <option value="newest">Сначала новые</option>
-              <option value="profit_desc">По прибыли ↓</option>
-              <option value="margin_desc">По марже ↓</option>
-              <option value="price_desc">По цене ↓</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Контейнер карточек товаров -->
-      <div id="products-list" class="space-y-3"></div>
-    </section>
-
-    <!-- ВКЛАДКА 3: КАЛЬКУЛЯТОР И ДОБАВЛЕНИЕ -->
-    <section id="tab-calculator" class="space-y-4 hidden">
-      <!-- Закрепленное живое табло юнит-экономики -->
-      <div class="sticky top-[68px] z-20 ios-card p-4 bg-slate-900 text-white shadow-lg border border-slate-700/60">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-[11px] text-slate-400 uppercase font-semibold tracking-wider">Чистая прибыль с 1 шт.</div>
-            <div id="calc-live-profit" class="text-2xl font-extrabold mt-0.5">0 ₽</div>
-          </div>
-          <div class="text-right">
-            <span id="calc-live-margin-badge" class="inline-block px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300">
-              Маржа: 0%
-            </span>
-            <div id="calc-live-roi" class="text-[11px] text-slate-300 mt-1">ROI закупки: 0%</div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2 mt-3 pt-2.5 border-t border-white/10 text-[11px]">
-          <div>
-            <span class="text-slate-400">Все расходы:</span>
-            <div id="calc-live-expenses" class="font-bold text-white mt-0.5">0 ₽</div>
-          </div>
-          <div>
-            <span class="text-slate-400">Расход на клики:</span>
-            <div id="calc-live-clicks" class="font-bold text-sky-300 mt-0.5">0 ₽</div>
-          </div>
-          <div>
-            <span class="text-slate-400">Запас кликов до 0₽:</span>
-            <div id="calc-live-breakeven" class="font-bold text-amber-300 mt-0.5">0 кл.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Форма товара -->
-      <form id="product-form" onsubmit="saveProduct(event)" class="space-y-3.5">
-        <input type="hidden" id="form-id" value="" />
-
-        <div class="ios-card p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 id="form-mode-title" class="text-sm font-bold text-gray-900">Новый товар</h3>
-            <button type="button" onclick="resetCalculatorForm()" class="text-xs font-semibold text-blue-600">Сбросить</button>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-500 mb-1">Название товара *</label>
-            <input type="text" id="f-name" required placeholder="Например: Набор кастрюль Royal Chef" class="ios-input" />
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Категория</label>
-              <input type="text" id="f-category" placeholder="Посуда / Дом" class="ios-input text-sm" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Статус на Авито</label>
-              <select id="f-status" class="ios-input text-sm">
-                <option value="active">В продаже</option>
-                <option value="shipping">Доставка</option>
-                <option value="sold">Продано</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Цены и себестоимость -->
-        <div class="ios-card p-4 space-y-3">
-          <h3 class="text-sm font-bold text-gray-900">Цена и закупка</h3>
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Цена на Авито (₽) *</label>
-              <input type="number" step="any" min="0" id="f-price" required oninput="updateLiveCalc()" placeholder="4500" class="ios-input" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Закупочная цена (₽) *</label>
-              <input type="number" step="any" min="0" id="f-cost" required oninput="updateLiveCalc()" placeholder="2400" class="ios-input" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Комиссия и Доставка Авито -->
-        <div class="ios-card p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-gray-900">Комиссия и Доставка Авито</h3>
-            <div class="inline-flex bg-gray-100 p-0.5 rounded-lg text-xs font-bold">
-              <button type="button" id="comm-mode-pct" onclick="setCommissionMode('percent')" class="px-2.5 py-1 rounded-md bg-white shadow-sm text-blue-600">%</button>
-              <button type="button" id="comm-mode-rub" onclick="setCommissionMode('rub')" class="px-2.5 py-1 rounded-md text-gray-500">₽</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label id="comm-label" class="block text-xs font-semibold text-gray-500 mb-1">Комиссия Авито (%)</label>
-              <input type="number" step="any" min="0" id="f-comm-val" oninput="updateLiveCalc()" value="7" class="ios-input" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Доставка / Упаковка (₽)</label>
-              <input type="number" step="any" min="0" id="f-delivery" oninput="updateLiveCalc()" value="0" placeholder="0" class="ios-input" />
-            </div>
-          </div>
-
-          <!-- Быстрые пресеты комиссии -->
-          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
-            <span class="text-[11px] text-gray-400 mr-1">Тариф:</span>
-            <button type="button" onclick="setQuickComm(0)" class="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-semibold text-gray-700 active-scale">0%</button>
-            <button type="button" onclick="setQuickComm(2.6)" class="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-semibold text-gray-700 active-scale">2.6%</button>
-            <button type="button" onclick="setQuickComm(5)" class="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-semibold text-gray-700 active-scale">5%</button>
-            <button type="button" onclick="setQuickComm(7)" class="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-semibold text-gray-700 active-scale">7%</button>
-            <button type="button" onclick="setQuickComm(9)" class="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-semibold text-gray-700 active-scale">9%</button>
-            <button type="button" onclick="setQuickComm(11)" class="px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-semibold text-gray-700 active-scale">11%</button>
-          </div>
-        </div>
-
-        <!-- Продвижение: Цена клика на Авито -->
-        <div class="ios-card p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold text-gray-900">Продвижение (Цена клика CPC)</h3>
-            <span id="calc-cpc-total-label" class="text-xs font-bold text-sky-600">Итого: 0 ₽</span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Цена 1 клика (₽)</label>
-              <input type="number" step="any" min="0" id="f-cpc" oninput="updateLiveCalc()" value="12" class="ios-input" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-500 mb-1">Кол-во кликов (шт.)</label>
-              <input type="number" step="1" min="0" id="f-clicks" oninput="syncClicksSlider(this.value)" value="15" class="ios-input" />
-            </div>
-          </div>
-
-          <div class="pt-1">
-            <div class="flex justify-between text-[11px] text-gray-400 mb-1.5">
-              <span>Ползунок кликов: 0</span>
-              <span>100</span>
-              <span>300 кликов</span>
-            </div>
-            <input type="range" id="f-clicks-slider" min="0" max="300" step="1" value="15" oninput="syncClicksInput(this.value)" />
-          </div>
-        </div>
-
-        <button type="submit" class="active-scale w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl shadow-md text-base transition-all">
-          Сохранить товар
-        </button>
-      </form>
-    </section>
-
-  </main>
-
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ iOS TAB BAR -->
-  <nav class="ios-glass fixed bottom-0 left-0 right-0 z-30 border-t border-gray-200/80 safe-bottom-nav pt-1.5 px-4">
-    <div class="max-w-md mx-auto grid grid-cols-3 gap-2">
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center justify-center py-1 text-blue-600">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
-        <span class="text-[11px] font-semibold mt-0.5">Сводка</span>
-      </button>
-
-      <button onclick="switchTab('products')" id="nav-products" class="flex flex-col items-center justify-center py-1 text-gray-400">
-        <div class="relative">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
-          <span id="nav-products-badge" class=" -top-1 -right-2.5 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
-        </div>
-        <span class="text-[11px] font-semibold mt-0.5">Товары</span>
-      </button>
-
-      <button onclick="switchTab('calculator')" id="nav-calculator" class="flex flex-col items-center justify-center py-1 text-gray-400">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"/></svg>
-        <span class="text-[11px] font-semibold mt-0.5">Калькулятор</span>
-      </button>
+  <div id="sec-stats" class="hidden">
+    <div class="stats-grid">
+      <div class="stat-card" style="background:#059669; color:#fff; grid-column: span 2;"><div class="stat-title" style="color:#d1fae5;">Чистая прибыль на руки (за вычетом кликов и упаковки)</div><div class="stat-val" id="stNet" style="font-size:26px;">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Прибыль со сделок</div><div class="stat-val" id="stGross" style="color:var(--primary);">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Едет в доставке</div><div class="stat-val" id="stTransit" style="color:var(--amber);">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Потрачено на клики</div><div class="stat-val" id="stClicks" style="color:var(--red);">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Рулоны пупырки / Хоз</div><div class="stat-val" id="stExtra" style="color:var(--red);">0 ₽</div></div>
     </div>
-  </nav>
+    <div class="card">
+      <h2>Списать рулон пупырки / скотч / коробки</h2>
+      <div class="row"><input type="text" id="expTitle" placeholder="Напр: Пупырка 50м"><input type="number" id="expSum" placeholder="Сумма ₽"></div>
+      <button class="btn-main btn-blue" style="margin-top:4px; padding:10px;" onclick="addExpense()">Списать расход</button>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2 style="margin:0;">История заказов</h2>
+        <div style="display:flex; gap:6px;">
+          <button onclick="exportJson()" style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; font-size:12px;">⬇️ Бэкап</button>
+          <label style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; font-size:12px; margin:0; cursor:pointer;">⬆️ Загрузить <input type="file" accept=".json" onchange="importJson(event)" style="display:none;"></label>
+        </div>
+      </div>
+      <div id="ordersList"></div>
+    </div>
+  </div>
 
-  <script>
-    const STORAGE_KEY = 'avito_tracker_ios_v1';
+  <div id="sec-prods" class="hidden">
+    <div class="card">
+      <h2 id="prodFormTitle">Добавить товар</h2>
+      <input type="hidden" id="editProdId">
+      <div class="row">
+        <div><label>Артикул</label><input type="text" id="pSku" placeholder="К-01"></div>
+        <div><label>Название товара *</label><input type="text" id="pName" placeholder="Набор кастрюль"></div>
+      </div>
+      <div class="row">
+        <div><label>Закупочная цена (₽)</label><input type="number" id="pBuy" placeholder="1500"></div>
+        <div><label>Цена продажи (₽)</label><input type="number" id="pSell" placeholder="2800"></div>
+      </div>
+      <div class="row-3">
+        <div><label>Комиссия (%)</label><input type="number" step="0.1" id="pComm" placeholder="7"></div>
+        <div><label>Доставка (₽)</label><input type="number" id="pDeliv" placeholder="150"></div>
+        <div><label>Зип-пакет (₽)</label><input type="number" id="pPack" placeholder="15"></div>
+      </div>
+      <div><label>Цена за 1 клик / просмотр на Авито (₽)</label><input type="number" step="0.1" id="pCpc" placeholder="3.5"></div>
+      <button class="btn-main btn-blue" onclick="saveProduct()">💾 Сохранить товар</button>
+    </div>
+    <div class="card"><h2>Мои товары и подсчет кликов</h2><div id="prodsList"></div></div>
+  </div>
+</div>
 
-    const DEFAULT_ITEMS = [
-      {
-        id: '1',
-        name: 'Набор кастрюль Royal Chef (нерж. сталь)',
-        category: 'Посуда',
-        status: 'sold',
-        price: 5490,
-        cost: 3100,
-        commissionMode: 'percent',
-        commissionValue: 7,
-        delivery: 150,
-        cpc: 14,
-        clicks: 22,
-        createdAt: Date.now() - 86400000 * 3
-      },
-      {
-        id: '2',
-        name: 'Сковорода сотовая 28 см сталь 316',
-        category: 'Посуда',
-        status: 'sold',
-        price: 3290,
-        cost: 1650,
-        commissionMode: 'percent',
-        commissionValue: 7,
-        delivery: 100,
-        cpc: 11,
-        clicks: 18,
-        createdAt: Date.now() - 86400000 * 2
-      },
-      {
-        id: '3',
-        name: 'Мантоварка-пароварка 3 яруса 30 см',
-        category: 'Посуда',
-        status: 'shipping',
-        price: 4190,
-        cost: 2300,
-        commissionMode: 'percent',
-        commissionValue: 7,
-        delivery: 120,
-        cpc: 13,
-        clicks: 16,
-        createdAt: Date.now() - 86400000 * 1
-      },
-      {
-        id: '4',
-        name: 'Набор инструментов в кейсе 108 предм.',
-        category: 'Инструменты',
-        status: 'active',
-        price: 4600,
-        cost: 2950,
-        commissionMode: 'percent',
-        commissionValue: 5,
-        delivery: 200,
-        cpc: 18,
-        clicks: 30,
-        createdAt: Date.now()
-      }
-    ];
+<script>
+  let db = { products: [], orders: [], expenses: [] };
+  let cart = [];
+  let channel = 'avito';
 
-    let items = [];
-    let currentTab = 'dashboard';
-    let dashFilter = 'all';
-    let listStatusFilter = 'all';
-    let formCommMode = 'percent';
-
-    function loadItems() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          items = JSON.parse(raw);
-        } else {
-          items = DEFAULT_ITEMS;
-          saveToStorage();
-        }
-      } catch (e) {
-        items = DEFAULT_ITEMS;
-      }
+  function init() {
+    const raw = localStorage.getItem('avito_posuda_v2');
+    if (raw) {
+      try { db = JSON.parse(raw); } catch (e) { console.error('Не удалось прочитать сохранённую базу', e); }
     }
-
-    function saveToStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    if (!db || !Array.isArray(db.products) || !Array.isArray(db.orders) || !Array.isArray(db.expenses)) {
+      db = { products: [], orders: [], expenses: [] };
     }
-
-    function calcUnitMetrics(item) {
-      const price = Number(item.price) || 0;
-      const cost = Number(item.cost) || 0;
-      const delivery = Number(item.delivery) || 0;
-      const cpc = Number(item.cpc) || 0;
-      const clicks = Number(item.clicks) || 0;
-      const commVal = Number(item.commissionValue) || 0;
-
-      const commRub = item.commissionMode === 'rub'
-        ? commRubVal(commVal)
-        : (price * commVal) / 100;
-
-      const clicksCost = cpc * clicks;
-      const totalExpenses = cost + commRub + delivery + clicksCost;
-      const netProfit = price - totalExpenses;
-      const margin = price > 0 ? (netProfit / price) * 100 : 0;
-      const roi = cost > 0 ? (netProfit / cost) * 100 : 0;
-
-      const profitBeforeClicks = price - (cost + commRub + delivery);
-      const maxClicksBreakEven = cpc > 0 ? Math.max(0, Math.floor(profitBeforeClicks / cpc)) : Infinity;
-
-      return {
-        price,
-        cost,
-        commRub,
-        delivery,
-        clicksCost,
-        clicks,
-        cpc,
-        totalExpenses,
-        netProfit,
-        margin,
-        roi,
-        maxClicksBreakEven
-      };
+    if (!db.products.length && !localStorage.getItem('avito_posuda_v2')) {
+      db.products = [
+        { id: '1', sku: 'К-01', name: 'Набор кастрюль Royal Chef', buy: 3200, sell: 5500, comm: 7, deliv: 200, pack: 25, cpc: 4, views: 0, returned: 0 },
+        { id: '2', sku: 'СК-26', name: 'Сковорода 316 сталь 26 см', buy: 1400, sell: 2600, comm: 7, deliv: 150, pack: 15, cpc: 3, views: 0, returned: 0 }
+      ];
     }
-
-    function commRubVal(v) {
-      return Number(v) || 0;
-    }
-
-    function formatRub(val) {
-      const rounded = Math.round(Number(val) || 0);
-      return rounded.toLocaleString('ru-RU') + ' ₽';
-    }
-
-    function formatPct(val) {
-      return (Number(val) || 0).toFixed(1) + '%';
-    }
-
-    function getMarginLevel(margin) {
-      if (margin >= 22) return 'high';
-      if (margin >= 10) return 'mid';
-      return 'low';
-    }
-
-    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-    function switchTab(tab) {
-      currentTab = tab;
-      ['dashboard', 'products', 'calculator'].forEach(t => {
-        document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
-        const navBtn = document.getElementById('nav-' + t);
-        if (t === tab) {
-          navBtn.classList.remove('text-gray-400');
-          navBtn.classList.add('text-blue-600');
-        } else {
-          navBtn.classList.remove('text-blue-600');
-          navBtn.classList.add('text-gray-400');
-        }
-      });
-      renderAll();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function openNewCalculator() {
-      resetCalculatorForm();
-      switchTab('calculator');
-    }
-
-    // СВОДКА
-    function setDashFilter(f) {
-      dashFilter = f;
-      renderDashboard();
-    }
-
-    function renderDashboard() {
-      ['all', 'deals', 'sold', 'active'].forEach(f => {
-        const btn = document.getElementById('df-' + f);
-        if (f === dashFilter) {
-          btn.className = 'flex-1 py-1.5 rounded-lg bg-white text-gray-900 shadow-sm transition-all';
-        } else {
-          btn.className = 'flex-1 py-1.5 rounded-lg text-gray-500 transition-all';
-        }
-      });
-
-      const filtered = items.filter(it => {
-        if (dashFilter === 'deals') return it.status === 'sold' || it.status === 'shipping';
-        if (dashFilter === 'sold') return it.status === 'sold';
-        if (dashFilter === 'active') return it.status === 'active';
-        return true;
-      });
-
-      let revenue = 0, cost = 0, comm = 0, deliv = 0, clicksCost = 0, totalClicks = 0, netProfit = 0;
-      let highCount = 0, midCount = 0, lowCount = 0;
-
-      items.forEach(it => {
-        const m = calcUnitMetrics(it);
-        const lvl = getMarginLevel(m.margin);
-        if (lvl === 'high') highCount++;
-        else if (lvl === 'mid') midCount++;
-        else lowCount++;
-      });
-
-      filtered.forEach(it => {
-        const m = calcUnitMetrics(it);
-        revenue += m.price;
-        cost += m.cost;
-        comm += m.commRub;
-        deliv += m.delivery;
-        clicksCost += m.clicksCost;
-        totalClicks += m.clicks;
-        netProfit += m.netProfit;
-      });
-
-      const totalExpenses = cost + comm + deliv + clicksCost;
-      const avgMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0;
-      const avgRoi = cost > 0 ? (netProfit / cost) * 100 : 0;
-      const avgCpc = totalClicks > 0 ? clicksCost / totalClicks : 0;
-
-      document.getElementById('dash-net-profit').textContent = formatRub(netProfit);
-      document.getElementById('dash-revenue').textContent = formatRub(revenue);
-      document.getElementById('dash-roi').textContent = formatPct(avgRoi);
-      document.getElementById('dash-count').textContent = filtered.length + ' шт.';
-      document.getElementById('dash-margin-badge').textContent = 'Маржа ' + formatPct(avgMargin);
-
-      document.getElementById('dash-total-expenses').textContent = 'Расходы: ' + formatRub(totalExpenses);
-      document.getElementById('dash-cost').textContent = formatRub(cost);
-      document.getElementById('dash-cost-pct').textContent = (revenue > 0 ? Math.round((cost / revenue) * 100) : 0) + '% от выручки';
-
-      document.getElementById('dash-comm').textContent = formatRub(comm);
-      document.getElementById('dash-comm-pct').textContent = (revenue > 0 ? ((comm / revenue) * 100).toFixed(1) : 0) + '% от выручки';
-
-      document.getElementById('dash-deliv').textContent = formatRub(deliv);
-      document.getElementById('dash-deliv-pct').textContent = (revenue > 0 ? ((deliv / revenue) * 100).toFixed(1) : 0) + '% от выручки';
-
-      document.getElementById('dash-clicks-cost').textContent = formatRub(clicksCost);
-      document.getElementById('dash-clicks-info').textContent = `${totalClicks} кл. (ср. ${Math.round(avgCpc)} ₽)`;
-
-      const denom = Math.max(revenue, totalExpenses, 1);
-      document.getElementById('bar-cost').style.width = Math.max(0, (cost / denom) * 100) + '%';
-      document.getElementById('bar-comm').style.width = Math.max(0, (comm / denom) * 100) + '%';
-      document.getElementById('bar-deliv').style.width = Math.max(0, (deliv / denom) * 100) + '%';
-      document.getElementById('bar-clicks').style.width = Math.max(0, (clicksCost / denom) * 100) + '%';
-      document.getElementById('bar-profit').style.width = Math.max(0, (Math.max(0, netProfit) / denom) * 100) + '%';
-
-      document.getElementById('mgroup-high').textContent = highCount;
-      document.getElementById('mgroup-mid').textContent = midCount;
-      document.getElementById('mgroup-low').textContent = lowCount;
-    }
-
-    function jumpToMarginFilter(level) {
-      document.getElementById('margin-filter-select').value = level;
-      listStatusFilter = 'all';
-      switchTab('products');
-    }
-
-    // СПИСОК ТОВАРОВ
-    function setListStatusFilter(status) {
-      listStatusFilter = status;
-      renderProducts();
-    }
-
-    function cycleItemStatus(id) {
-      const order = ['active', 'shipping', 'sold'];
-      items = items.map(it => {
-        if (it.id !== id) return it;
-        const nextIdx = (order.indexOf(it.status) + 1) % order.length;
-        return { ...it, status: order[nextIdx] };
-      });
-      saveToStorage();
-      renderAll();
-    }
-
-    function adjustItemClicks(id, delta) {
-      items = items.map(it => {
-        if (it.id !== id) return it;
-        const nextClicks = Math.max(0, (Number(it.clicks) || 0) + delta);
-        return { ...it, clicks: nextClicks };
-      });
-      saveToStorage();
-      renderAll();
-    }
-
-    function deleteItem(id) {
-      if (!confirm('Удалить этот товар из учета?')) return;
-      items = items.filter(it => it.id !== id);
-      saveToStorage();
-      renderAll();
-    }
-
-    function editItem(id) {
-      const item = items.find(it => it.id === id);
-      if (!item) return;
-      document.getElementById('form-id').value = item.id;
-      document.getElementById('form-mode-title').textContent = 'Редактирование товара';
-      document.getElementById('f-name').value = item.name;
-      document.getElementById('f-category').value = item.category || '';
-      document.getElementById('f-status').value = item.status || 'active';
-      document.getElementById('f-price').value = item.price;
-      document.getElementById('f-cost').value = item.cost;
-      setCommissionMode(item.commissionMode || 'percent');
-      document.getElementById('f-comm-val').value = item.commissionValue;
-      document.getElementById('f-delivery').value = item.delivery || 0;
-      document.getElementById('f-cpc').value = item.cpc || 0;
-      document.getElementById('f-clicks').value = item.clicks || 0;
-      document.getElementById('f-clicks-slider').value = Math.min(300, item.clicks || 0);
-      updateLiveCalc();
-      switchTab('calculator');
-    }
-
-    function renderProducts() {
-      ['all', 'active', 'shipping', 'sold'].forEach(s => {
-        const btn = document.getElementById('lsf-' + s);
-        if (s === listStatusFilter) {
-          btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-blue-600 text-white shadow-sm';
-        } else {
-          btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-gray-100 text-gray-600';
-        }
-      });
-
-      const query = (document.getElementById('search-input').value || '').trim().toLowerCase();
-      const marginFilter = document.getElementById('margin-filter-select').value;
-      const sortBy = document.getElementById('sort-select').value;
-
-      let filtered = items.filter(it => {
-        if (listStatusFilter !== 'all' && it.status !== listStatusFilter) return false;
-        if (query && !it.name.toLowerCase().includes(query) && !(it.category || '').toLowerCase().includes(query)) return false;
-        const m = calcUnitMetrics(it);
-        if (marginFilter !== 'all' && getMarginLevel(m.margin) !== marginFilter) return false;
-        return true;
-      });
-
-      filtered.sort((a, b) => {
-        const ma = calcUnitMetrics(a);
-        const mb = calcUnitMetrics(b);
-        if (sortBy === 'profit_desc') return mb.netProfit - ma.netProfit;
-        if (sortBy === 'margin_desc') return mb.margin - ma.margin;
-        if (sortBy === 'price_desc') return mb.price - ma.price;
-        return (b.createdAt || 0) - (a.createdAt || 0);
-      });
-
-      const container = document.getElementById('products-list');
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="ios-card p-8 text-center space-y-2">
-            <div class="text-sm font-bold text-gray-700">Товары не найдены</div>
-            <p class="text-xs text-gray-400">Измените фильтр или добавьте новый товар в калькуляторе.</p>
-          </div>
-        `;
-        return;
-      }
-
-      const statusLabels = {
-        active: { text: 'В продаже', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
-        shipping: { text: 'Доставка', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-        sold: { text: 'Продано', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-      };
-
-      container.innerHTML = filtered.map(it => {
-        const m = calcUnitMetrics(it);
-        const lvl = getMarginLevel(m.margin);
-        const marginBadgeCls = lvl === 'high'
-          ? 'bg-emerald-100 text-emerald-800'
-          : (lvl === 'mid' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800');
-        const st = statusLabels[it.status] || statusLabels.active;
-
-        return `
-          <div class="ios-card p-4 space-y-3">
-            <div class="flex items-start justify-between gap-2">
-              <div class="min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">${it.category || 'Товар'}</span>
-                  <span class="text-gray-300">•</span>
-                  <button onclick="cycleItemStatus('${it.id}')" class="px-2 py-0.5 rounded-md text-[11px] font-bold border ${st.cls} active-scale">
-                    ${st.text} ↻
-                  </button>
-                </div>
-                <h3 class="text-sm font-bold text-gray-900 mt-1 leading-snug break-words">${it.name}</h3>
-              </div>
-              <div class="text-right shrink-0">
-                <div class="text-base font-extrabold ${m.netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
-                  ${m.netProfit >= 0 ? '+' : ''}${formatRub(m.netProfit)}
-                </div>
-                <span class="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${marginBadgeCls}">
-                  Маржа ${formatPct(m.margin)}
-                </span>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-4 gap-1.5 bg-gray-50 rounded-xl p-2.5 text-center text-[11px]">
-              <div>
-                <div class="text-gray-400">Цена</div>
-                <div class="font-bold text-gray-800 mt-0.5">${formatRub(m.price)}</div>
-              </div>
-              <div>
-                <div class="text-gray-400">Закупка</div>
-                <div class="font-bold text-gray-800 mt-0.5">${formatRub(m.cost)}</div>
-              </div>
-              <div>
-                <div class="text-gray-400">Комиссия</div>
-                <div class="font-bold text-gray-800 mt-0.5">${formatRub(m.commRub)}</div>
-              </div>
-              <div>
-                <div class="text-gray-400">Доставка</div>
-                <div class="font-bold text-gray-800 mt-0.5">${formatRub(m.delivery)}</div>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
-              <div class="flex items-center gap-1.5">
-                <span class="text-gray-500">Клики (${m.cpc}₽):</span>
-                <button onclick="adjustItemClicks('${it.id}', -1)" class="w-6 h-6 rounded-lg bg-gray-100 font-bold text-gray-700 active-scale">−</button>
-                <span class="font-bold text-gray-900 min-w-[24px] text-center">${m.clicks}</span>
-                <button onclick="adjustItemClicks('${it.id}', 1)" class="w-6 h-6 rounded-lg bg-gray-100 font-bold text-gray-700 active-scale">+</button>
-                <span class="text-sky-600 font-semibold ml-1">(${formatRub(m.clicksCost)})</span>
-              </div>
-
-              <div class="flex items-center gap-2">
-                <button onclick="editItem('${it.id}')" class="text-blue-600 font-semibold px-2 py-1 rounded-lg bg-blue-50 active-scale">Изм.</button>
-                <button onclick="deleteItem('${it.id}')" class="text-rose-600 font-semibold px-2 py-1 rounded-lg bg-rose-50 active-scale">Удал.</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // КАЛЬКУЛЯТОР
-    function setCommissionMode(mode) {
-      formCommMode = mode;
-      const pctBtn = document.getElementById('comm-mode-pct');
-      const rubBtn = document.getElementById('comm-mode-rub');
-      const label = document.getElementById('comm-label');
-
-      if (mode === 'percent') {
-        pctBtn.className = 'px-2.5 py-1 rounded-md bg-white shadow-sm text-blue-600';
-        rubBtn.className = 'px-2.5 py-1 rounded-md text-gray-500';
-        label.textContent = 'Комиссия Авито (%)';
-      } else {
-        rubBtn.className = 'px-2.5 py-1 rounded-md bg-white shadow-sm text-blue-600';
-        pctBtn.className = 'px-2.5 py-1 rounded-md text-gray-500';
-        label.textContent = 'Комиссия Авито (₽)';
-      }
-      updateLiveCalc();
-    }
-
-    function setQuickComm(pct) {
-      setCommissionMode('percent');
-      document.getElementById('f-comm-val').value = pct;
-      updateLiveCalc();
-    }
-
-    function syncClicksSlider(val) {
-      document.getElementById('f-clicks-slider').value = Math.min(300, Number(val) || 0);
-      updateLiveCalc();
-    }
-
-    function syncClicksInput(val) {
-      document.getElementById('f-clicks').value = val;
-      updateLiveCalc();
-    }
-
-    function updateLiveCalc() {
-      const draft = {
-        price: document.getElementById('f-price').value,
-        cost: document.getElementById('f-cost').value,
-        commissionMode: formCommMode,
-        commissionValue: document.getElementById('f-comm-val').value,
-        delivery: document.getElementById('f-delivery').value,
-        cpc: document.getElementById('f-cpc').value,
-        clicks: document.getElementById('f-clicks').value
-      };
-
-      const m = calcUnitMetrics(draft);
-      const profitEl = document.getElementById('calc-live-profit');
-      profitEl.textContent = (m.netProfit >= 0 ? '+' : '') + formatRub(m.netProfit);
-      profitEl.className = 'text-2xl font-extrabold mt-0.5 ' + (m.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400');
-
-      document.getElementById('calc-live-margin-badge').textContent = 'Маржа: ' + formatPct(m.margin);
-      document.getElementById('calc-live-roi').textContent = 'ROI закупки: ' + formatPct(m.roi);
-      document.getElementById('calc-live-expenses').textContent = formatRub(m.totalExpenses);
-      document.getElementById('calc-live-clicks').textContent = formatRub(m.clicksCost);
-      document.getElementById('calc-live-breakeven').textContent =
-        m.maxClicksBreakEven === Infinity ? '∞ кл.' : m.maxClicksBreakEven + ' кл.';
-      document.getElementById('calc-cpc-total-label').textContent = 'Итого: ' + formatRub(m.clicksCost);
-    }
-
-    function resetCalculatorForm() {
-      document.getElementById('form-id').value = '';
-      document.getElementById('form-mode-title').textContent = 'Новый товар';
-      document.getElementById('f-name').value = '';
-      document.getElementById('f-category').value = '';
-      document.getElementById('f-status').value = 'active';
-      document.getElementById('f-price').value = '';
-      document.getElementById('f-cost').value = '';
-      setCommissionMode('percent');
-      document.getElementById('f-comm-val').value = 7;
-      document.getElementById('f-delivery').value = 0;
-      document.getElementById('f-cpc').value = 12;
-      document.getElementById('f-clicks').value = 15;
-      document.getElementById('f-clicks-slider').value = 15;
-      updateLiveCalc();
-    }
-
-    function saveProduct(e) {
-      e.preventDefault();
-      const id = document.getElementById('form-id').value;
-      const newItem = {
-        id: id || String(Date.now()),
-        name: document.getElementById('f-name').value.trim(),
-        category: document.getElementById('f-category').value.trim() || 'Разное',
-        status: document.getElementById('f-status').value,
-        price: Number(document.getElementById('f-price').value) || 0,
-        cost: Number(document.getElementById('f-cost').value) || 0,
-        commissionMode: formCommMode,
-        commissionValue: Number(document.getElementById('f-comm-val').value) || 0,
-        delivery: Number(document.getElementById('f-delivery').value) || 0,
-        cpc: Number(document.getElementById('f-cpc').value) || 0,
-        clicks: Number(document.getElementById('f-clicks').value) || 0,
-        createdAt: Date.now()
-      };
-
-      if (id) {
-        items = items.map(it => (it.id === id ? newItem : it));
-      } else {
-        items.unshift(newItem);
-      }
-
-      saveToStorage();
-      resetCalculatorForm();
-      switchTab('products');
-    }
-
-    // ЭКСПОРТ И ИМПОРТ БАЗЫ
-    function exportData() {
-      const dataStr = JSON.stringify(items, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `avito-uchet-backup-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function importData(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (Array.isArray(parsed)) {
-            items = parsed;
-            saveToStorage();
-            renderAll();
-            alert('База товаров успешно загружена!');
-          } else {
-            alert('Неверный формат файла.');
-          }
-        } catch (err) {
-          alert('Ошибка чтения JSON-файла.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function renderAll() {
-      document.getElementById('nav-products-badge').textContent = items.length;
-      renderDashboard();
-      renderProducts();
-      updateLiveCalc();
-    }
-
-    // ИНИЦИАЛИЗАЦИЯ
-    loadItems();
+    saveDb();
     renderAll();
-  </script>
+  }
+
+  function saveDb() {
+    localStorage.setItem('avito_posuda_v2', JSON.stringify(db));
+    const retCount = db.products.reduce((s, p) => s + (p.returned || 0), 0);
+    const badge = document.getElementById('returnBadge');
+    if (retCount > 0) {
+      badge.style.display = 'block';
+      badge.textContent = 'На руках с возврата: ' + retCount + ' шт.';
+    } else badge.style.display = 'none';
+  }
+
+  function openTab(t) {
+    ['sale', 'stats', 'prods'].forEach(x => {
+      document.getElementById('sec-' + x).classList.add('hidden');
+      document.getElementById('t-' + x).classList.remove('active');
+    });
+    document.getElementById('sec-' + t).classList.remove('hidden');
+    document.getElementById('t-' + t).classList.add('active');
+    renderAll();
+  }
+
+  function setChannel(ch) {
+    channel = ch;
+    document.getElementById('ch-avito').classList.toggle('active', ch === 'avito');
+    document.getElementById('ch-pickup').classList.toggle('active', ch === 'pickup');
+    document.getElementById('ordStatus').value = ch === 'avito' ? 'shipping' : 'completed';
+    if (ch === 'pickup') {
+      document.getElementById('commPct').value = '';
+      document.getElementById('commRub').value = '';
+      document.getElementById('delivRub').value = '';
+      recalcOrder();
+    } else fillDefaultFees();
+  }
+
+  function showSearch() {
+    const q = document.getElementById('searchInp').value.trim().toLowerCase();
+    const drop = document.getElementById('searchDrop');
+    const list = db.products.filter(p => (p.name || '').toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q)));
+    if (!list.length) drop.innerHTML = '<div style="padding:12px; color:#64748b;">Товар не найден</div>';
+    else drop.innerHTML = list.map(p => `
+      <div class="drop-item" onclick="addToCart('${p.id}')">
+        <div><span class="sku-tag">${p.sku || '—'}</span><b>${p.name}</b>${p.returned > 0 ? `<span style="color:#d97706; font-size:12px;"> (На руках: ${p.returned})</span>` : ''}</div>
+        <div style="font-size:13px; color:#2563eb; font-weight:700;">${p.sell} ₽</div>
+      </div>`).join('');
+    drop.style.display = 'block';
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) document.getElementById('searchDrop').style.display = 'none';
+  });
+
+  function addToCart(id) {
+    const p = db.products.find(x => x.id === id);
+    if (!p) return;
+    const ex = cart.find(x => x.id === id);
+    if (ex) ex.qty += 1;
+    else cart.push({ id: p.id, sku: p.sku, name: p.name, qty: 1, buy: p.buy, sell: p.sell, pack: p.pack || 0, comm: p.comm || 0, deliv: p.deliv || 0 });
+    document.getElementById('searchInp').value = '';
+    document.getElementById('searchDrop').style.display = 'none';
+    renderCart();
+    fillDefaultFees();
+  }
+
+  function fillDefaultFees() {
+    const packSum = cart.reduce((s, i) => s + (Number(i.pack) || 0) * i.qty, 0);
+    document.getElementById('packRub').value = packSum > 0 ? packSum : '';
+    if (channel === 'avito' && cart.length > 0) {
+      document.getElementById('commPct').value = cart[0].comm;
+      const maxDeliv = Math.max(...cart.map(i => Number(i.deliv) || 0));
+      document.getElementById('delivRub').value = maxDeliv > 0 ? maxDeliv : '';
+      calcByPct();
+    } else recalcOrder();
+  }
+
+  function renderCart() {
+    const box = document.getElementById('cartList');
+    if (!cart.length) {
+      box.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:14px; border:1px dashed #cbd5e1; border-radius:10px; margin-bottom:12px;">Корзина заказа пуста</div>';
+      return;
+    }
+    box.innerHTML = cart.map((item, idx) => `
+      <div class="cart-item">
+        <div class="cart-head"><span><span class="sku-tag">${item.sku || '—'}</span>${item.name}</span><button class="btn-del" onclick="delCart(${idx})">✕</button></div>
+        <div class="row-3" style="margin-bottom:0;">
+          <div><label>Кол-во (шт)</label><input type="number" min="1" value="${item.qty}" oninput="updCart(${idx}, 'qty', this.value)"></div>
+          <div><label>Закуп 1 шт</label><input type="number" value="${item.buy}" oninput="updCart(${idx}, 'buy', this.value)"></div>
+          <div><label>Продажа 1 шт</label><input type="number" value="${item.sell}" oninput="updCart(${idx}, 'sell', this.value)"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  function updCart(idx, field, val) {
+    cart[idx][field] = Number(val) || 0;
+    if (field === 'qty') {
+      const packSum = cart.reduce((s, i) => s + (Number(i.pack) || 0) * i.qty, 0);
+      document.getElementById('packRub').value = packSum > 0 ? packSum : '';
+    }
+    calcByPct();
+  }
+
+  function delCart(idx) { cart.splice(idx, 1); renderCart(); fillDefaultFees(); }
+  function getRev() { return cart.reduce((s, i) => s + i.sell * i.qty, 0); }
+  function getBuy() { return cart.reduce((s, i) => s + i.buy * i.qty, 0); }
+
+  function calcByPct() {
+    const pctVal = document.getElementById('commPct').value;
+    if (pctVal === '') { recalcOrder(); return; }
+    const rub = Math.round(getRev() * (Number(pctVal) || 0) / 100);
+    document.getElementById('commRub').value = rub > 0 ? rub : (Number(pctVal) === 0 ? 0 : '');
+    recalcOrder();
+  }
+
+  function calcByRub() {
+    const rubVal = document.getElementById('commRub').value;
+    const rev = getRev();
+    if (rubVal === '') document.getElementById('commPct').value = '';
+    else if (rev > 0) document.getElementById('commPct').value = ((Number(rubVal) / rev) * 100).toFixed(1);
+    recalcOrder();
+  }
+
+  function recalcOrder() {
+    const rev = getRev(), buy = getBuy();
+    const comm = Number(document.getElementById('commRub').value) || 0;
+    const deliv = Number(document.getElementById('delivRub').value) || 0;
+    const pack = Number(document.getElementById('packRub').value) || 0;
+    document.getElementById('sumRev').textContent = rev + ' ₽';
+    document.getElementById('sumBuy').textContent = buy + ' ₽';
+    document.getElementById('sumFees').textContent = (comm + deliv + pack) + ' ₽';
+    document.getElementById('sumProfit').textContent = (rev - buy - comm - deliv - pack) + ' ₽';
+  }
+
+  function saveOrder() {
+    if (!cart.length) return alert('Добавь товар в заказ!');
+    const rev = getRev(), buy = getBuy();
+    const comm = Number(document.getElementById('commRub').value) || 0;
+    const deliv = Number(document.getElementById('delivRub').value) || 0;
+    const pack = Number(document.getElementById('packRub').value) || 0;
+    cart.forEach(item => {
+      const p = db.products.find(x => x.id === item.id);
+      if (p && p.returned > 0) p.returned = Math.max(0, p.returned - item.qty);
+    });
+    db.orders.unshift({
+      id: Date.now().toString(), date: new Date().toLocaleDateString('ru-RU'), channel,
+      status: document.getElementById('ordStatus').value, note: document.getElementById('ordNote').value.trim(),
+      items: JSON.parse(JSON.stringify(cart)), rev, buy, comm, deliv, pack, profit: rev - buy - comm - deliv - pack
+    });
+    cart = [];
+    document.getElementById('ordNote').value = '';
+    saveDb(); renderAll(); openTab('stats');
+  }
+
+  function setOrdStatus(id, st) {
+    const o = db.orders.find(x => x.id === id);
+    if (!o) return;
+    if (st === 'returned' && o.status !== 'returned') {
+      o.items.forEach(i => { const p = db.products.find(x => x.id === i.id); if (p) p.returned = (p.returned || 0) + i.qty; });
+    } else if (o.status === 'returned' && st !== 'returned') {
+      o.items.forEach(i => { const p = db.products.find(x => x.id === i.id); if (p) p.returned = Math.max(0, (p.returned || 0) - i.qty); });
+    }
+    o.status = st; saveDb(); renderAll();
+  }
+
+  function delOrder(id) {
+    if (!confirm('Удалить заказ?')) return;
+    db.orders = db.orders.filter(x => x.id !== id); saveDb(); renderAll();
+  }
+
+  function addExpense() {
+    const title = document.getElementById('expTitle').value.trim() || 'Упаковка';
+    const sum = Number(document.getElementById('expSum').value) || 0;
+    if (sum <= 0) return;
+    db.expenses.push({ id: Date.now().toString(), title, sum });
+    document.getElementById('expTitle').value = '';
+    document.getElementById('expSum').value = '';
+    saveDb(); renderAll();
+  }
+
+  function saveProduct() {
+    const id = document.getElementById('editProdId').value;
+    const sku = document.getElementById('pSku').value.trim();
+    const name = document.getElementById('pName').value.trim();
+    const buy = Number(document.getElementById('pBuy').value) || 0;
+    const sell = Number(document.getElementById('pSell').value) || 0;
+    const comm = Number(document.getElementById('pComm').value) || 0;
+    const deliv = Number(document.getElementById('pDeliv').value) || 0;
+    const pack = Number(document.getElementById('pPack').value) || 0;
+    const cpc = Number(document.getElementById('pCpc').value) || 0;
+    if (!name) return alert('Введи название товара');
+    if (id) {
+      const p = db.products.find(x => x.id === id);
+      if (p) Object.assign(p, { sku, name, buy, sell, comm, deliv, pack, cpc });
+    } else db.products.push({ id: Date.now().toString(), sku, name, buy, sell, comm, deliv, pack, cpc, views: 0, returned: 0 });
+    ['editProdId','pSku','pName','pBuy','pSell','pComm','pDeliv','pPack','pCpc'].forEach(k => document.getElementById(k).value = '');
+    document.getElementById('prodFormTitle').textContent = 'Добавить товар';
+    saveDb(); renderAll();
+  }
+
+  function editProd(id) {
+    const p = db.products.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('editProdId').value = p.id;
+    document.getElementById('pSku').value = p.sku || '';
+    document.getElementById('pName').value = p.name || '';
+    document.getElementById('pBuy').value = p.buy || 0;
+    document.getElementById('pSell').value = p.sell || 0;
+    document.getElementById('pComm').value = p.comm || 0;
+    document.getElementById('pDeliv').value = p.deliv || 0;
+    document.getElementById('pPack').value = p.pack || 0;
+    document.getElementById('pCpc').value = p.cpc || 0;
+    document.getElementById('prodFormTitle').textContent = 'Изменить товар';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function addViews(id) {
+    const inp = document.getElementById('vAdd_' + id), val = Number(inp.value) || 0;
+    const p = db.products.find(x => x.id === id);
+    if (p && val !== 0) { p.views = Math.max(0, (p.views || 0) + val); inp.value = ''; saveDb(); renderAll(); }
+  }
+
+  function renderAll() {
+    renderCart(); recalcOrder();
+    const comp = db.orders.filter(o => o.status === 'completed');
+    const ship = db.orders.filter(o => o.status === 'shipping');
+    const gross = comp.reduce((s, o) => s + (Number(o.profit) || 0), 0);
+    const transit = ship.reduce((s, o) => s + (Number(o.profit) || 0), 0);
+    const clicksCost = Math.round(db.products.reduce((s, p) => s + (p.views || 0) * (p.cpc || 0), 0));
+    const extraCost = db.expenses.reduce((s, e) => s + (Number(e.sum) || 0), 0);
+    document.getElementById('stGross').textContent = gross + ' ₽';
+    document.getElementById('stTransit').textContent = transit + ' ₽';
+    document.getElementById('stClicks').textContent = clicksCost + ' ₽';
+    document.getElementById('stExtra').textContent = extraCost + ' ₽';
+    document.getElementById('stNet').textContent = (gross - clicksCost - extraCost) + ' ₽';
+
+    const oList = document.getElementById('ordersList');
+    oList.innerHTML = db.orders.length ? db.orders.map(o => `
+      <div class="order-card">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span><b>${o.date}</b> • ${o.channel === 'avito' ? '🚚 Авито' : '🤝 Самовывоз'} ${o.note ? '(' + o.note + ')' : ''}</span>
+          <b style="color:var(--green); font-size:16px;">${o.profit >= 0 ? '+' : ''}${o.profit} ₽</b>
+        </div>
+        <div style="font-size:13px; margin-bottom:6px;">${o.items.map(i => `${i.name} ×${i.qty} шт.`).join(', ')}</div>
+        <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">Продажа: ${o.rev} ₽ | Закуп: ${o.buy} ₽ | Ком: ${o.comm} ₽ | Дост: ${o.deliv} ₽ | Упак: ${o.pack} ₽</div>
+        <div style="display:flex; gap:8px;">
+          <select onchange="setOrdStatus('${o.id}', this.value)" style="padding:6px; font-size:13px;">
+            <option value="shipping" ${o.status==='shipping'?'selected':''}>🚚 В доставке</option>
+            <option value="completed" ${o.status==='completed'?'selected':''}>✅ Завершен</option>
+            <option value="returned" ${o.status==='returned'?'selected':''}>↩️ Возврат (На руках)</option>
+          </select>
+          <button onclick="delOrder('${o.id}')" style="border:1px solid #fca5a5; background:#fef2f2; color:#dc2626; border-radius:8px; padding:0 12px; font-size:12px;">Удалить</button>
+        </div>
+      </div>`).join('') : '<div style="color:#94a3b8; text-align:center;">Заказов пока нет</div>';
+
+    const pList = document.getElementById('prodsList');
+    pList.innerHTML = db.products.map(p => `
+      <div class="order-card">
+        <div style="display:flex; justify-content:space-between;">
+          <div><span class="sku-tag">${p.sku || '—'}</span><b>${p.name}</b></div>
+          <button onclick="editProd('${p.id}')" style="border:none; background:none; color:var(--primary); font-weight:600;">Изменить</button>
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin:6px 0;">Закуп: <b>${p.buy} ₽</b> | Продажа: <b>${p.sell} ₽</b> | Клик: <b>${p.cpc} ₽</b></div>
+        <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+          <span style="font-size:12px;">Кликов: <b>${p.views||0}</b> (${Math.round((p.views||0)*(p.cpc||0))} ₽)</span>
+          <input type="number" id="vAdd_${p.id}" placeholder="+ клики" style="width:95px; padding:6px; font-size:14px;">
+          <button onclick="addViews('${p.id}')" style="background:var(--primary); color:#fff; border:none; border-radius:8px; padding:7px 12px; font-weight:700;">+</button>
+        </div>
+      </div>`).join('') || '<div style="color:#94a3b8;text-align:center;">Товаров пока нет</div>';
+  }
+
+  function exportJson() {
+    const a = document.createElement('a');
+    a.href = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+    a.download = "avito_backup.json";
+    a.click();
+  }
+
+  function importJson(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      try {
+        const loaded = JSON.parse(ev.target.result);
+        if (!loaded || !Array.isArray(loaded.products) || !Array.isArray(loaded.orders) || !Array.isArray(loaded.expenses)) throw new Error('Неверный формат файла');
+        if (!confirm('Заменить текущую базу данными из резервной копии?')) return;
+        db = loaded; saveDb(); renderAll(); alert('База загружена!');
+      } catch (err) { alert('Не удалось загрузить файл: ' + err.message); }
+      finally { e.target.value = ''; }
+    };
+    r.readAsText(f);
+  }
+
+  init();
+</script>
 </body>
 </html>
