@@ -1,883 +1,582 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>Авито Учет — Посуда</title>
-    <style>
-      :root {
-        --bg: #f1f5f9;
-        --card: #ffffff;
-        --text: #0f172a;
-        --muted: #64748b;
-        --border: #cbd5e1;
-        --primary: #2563eb;
-        --green: #059669;
-        --red: #dc2626;
-        --amber: #d97706;
-      }
-      * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
-      body {
-        margin: 0;
-        padding: 0 0 40px 0;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        font-size: 15px;
-      }
-      header {
-        background: #0f172a;
-        color: #fff;
-        padding: 12px 16px;
-        position: sticky;
-        top: 0;
-        z-index: 30;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      }
-      .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-      .logo {
-        font-size: 18px;
-        font-weight: 800;
-      }
-      .badge-return {
-        background: #f59e0b;
-        color: #000;
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 20px;
-        display: none;
-      }
-      .tabs {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-      }
-      .tab-btn {
-        background: #1e293b;
-        color: #cbd5e1;
-        border: none;
-        border-radius: 8px;
-        padding: 9px 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      .tab-btn.active {
-        background: var(--primary);
-        color: #fff;
-      }
-      .container {
-        max-width: 900px;
-        margin: 14px auto;
-        padding: 0 12px;
-      }
-      .card {
-        background: var(--card);
-        border-radius: 14px;
-        padding: 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-        margin-bottom: 14px;
-        border: 1px solid #e2e8f0;
-      }
-      h2 {
-        margin: 0 0 12px 0;
-        font-size: 17px;
-      }
-      label {
-        display: block;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--muted);
-        margin-bottom: 4px;
-      }
-      input,
-      select {
-        width: 100%;
-        padding: 10px 12px;
-        font-size: 16px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        background: #fff;
-        color: var(--text);
-        outline: none;
-      }
-      input:focus,
-      select:focus {
-        border-color: var(--primary);
-      }
-      .row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-      .row-3 {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-      .channel-switch {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-        background: #e2e8f0;
-        padding: 4px;
-        border-radius: 10px;
-        margin-bottom: 14px;
-      }
-      .ch-btn {
-        border: none;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        background: transparent;
-        color: #475569;
-      }
-      .ch-btn.active {
-        background: var(--primary);
-        color: #fff;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-      }
-      .search-wrap {
-        position: relative;
-        margin-bottom: 14px;
-      }
-      .dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        max-height: 220px;
-        overflow-y: auto;
-        z-index: 40;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        display: none;
-      }
-      .drop-item {
-        padding: 10px 12px;
-        border-bottom: 1px solid #f1f5f9;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .drop-item:active {
-        background: #eff6ff;
-      }
-      .sku-tag {
-        background: #e2e8f0;
-        color: #334155;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 2px 6px;
-        border-radius: 5px;
-        margin-right: 6px;
-      }
-      .cart-item {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 10px;
-        margin-bottom: 8px;
-      }
-      .cart-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-        font-weight: 700;
-      }
-      .btn-del {
-        background: none;
-        border: none;
-        color: var(--red);
-        font-size: 18px;
-        font-weight: 800;
-        padding: 0 6px;
-      }
-      .summary-box {
-        background: #ecfdf5;
-        border: 1px solid #a7f3d0;
-        border-radius: 12px;
-        padding: 12px;
-        margin-top: 12px;
-      }
-      .sum-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-        font-size: 13px;
-        margin-bottom: 8px;
-      }
-      .profit-line {
-        font-size: 18px;
-        font-weight: 800;
-        color: var(--green);
-        border-top: 1px solid #a7f3d0;
-        padding-top: 8px;
-      }
-      .btn-main {
-        width: 100%;
-        background: var(--green);
-        color: #fff;
-        border: none;
-        padding: 14px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 700;
-        margin-top: 12px;
-        cursor: pointer;
-      }
-      .btn-blue {
-        background: var(--primary);
-      }
-      .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 14px;
-      }
-      .stat-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 12px;
-        border: 1px solid #e2e8f0;
-      }
-      .stat-title {
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--muted);
-        text-transform: uppercase;
-      }
-      .stat-val {
-        font-size: 20px;
-        font-weight: 800;
-        margin-top: 4px;
-      }
-      .order-card {
-        border-bottom: 1px solid #e2e8f0;
-        padding: 12px 0;
-      }
-      .order-card:last-child {
-        border-bottom: none;
-      }
-      .hidden {
-        display: none !important;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="header-top">
-        <div class="logo">📦 Авито Учет</div>
-        <div id="returnBadge" class="badge-return"></div>
-      </div>
-      <div class="tabs">
-        <button class="tab-btn active" id="t-sale" onclick="openTab('sale')">
-          ➕ Продажа
-        </button>
-        <button class="tab-btn" id="t-stats" onclick="openTab('stats')">
-          📊 Статистика
-        </button>
-        <button class="tab-btn" id="t-prods" onclick="openTab('prods')">
-          🏷️ Товары
-        </button>
-      </div>
-    </header>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Авито Учет — Посуда</title>
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #cbd5e1;
+    --primary: #2563eb;
+    --green: #059669;
+    --red: #dc2626;
+    --amber: #d97706;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 0 0 40px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); font-size: 15px;
+  }
+  header {
+    background: #0f172a; color: #fff; padding: 12px 16px;
+    position: sticky; top: 0; z-index: 30;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .logo { font-size: 18px; font-weight: 800; }
+  .badge-return {
+    background: #f59e0b; color: #000; font-size: 12px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px; display: none;
+  }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tab-btn {
+    background: #1e293b; color: #cbd5e1; border: none; border-radius: 8px;
+    padding: 9px 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .tab-btn.active { background: var(--primary); color: #fff; }
+  .container { max-width: 900px; margin: 14px auto; padding: 0 12px; }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 14px;
+    border: 1px solid #e2e8f0;
+  }
+  h2 { margin: 0 0 12px 0; font-size: 17px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  input, select {
+    width: 100%; padding: 10px 12px; font-size: 16px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: #fff; color: var(--text); outline: none;
+  }
+  input:focus, select:focus { border-color: var(--primary); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .channel-switch {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 14px;
+  }
+  .ch-btn {
+    border: none; padding: 10px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; background: transparent; color: #475569;
+  }
+  .ch-btn.active { background: var(--primary); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+  .search-wrap { position: relative; margin-bottom: 14px; }
+  .dropdown {
+    position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+    border: 1px solid var(--border); border-radius: 10px; max-height: 220px;
+    overflow-y: auto; z-index: 40; box-shadow: 0 8px 20px rgba(0,0,0,0.12); display: none;
+  }
+  .drop-item {
+    padding: 10px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .drop-item:active { background: #eff6ff; }
+  .sku-tag {
+    background: #e2e8f0; color: #334155; font-size: 11px; font-weight: 700;
+    padding: 2px 6px; border-radius: 5px; margin-right: 6px;
+  }
+  .cart-item {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 10px; margin-bottom: 8px;
+  }
+  .cart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; }
+  .btn-del { background: none; border: none; color: var(--red); font-size: 18px; font-weight: 800; padding: 0 6px; cursor: pointer; }
+  .summary-box {
+    background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px;
+    padding: 12px; margin-top: 12px;
+  }
+  .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 13px; margin-bottom: 8px; }
+  .profit-line { font-size: 18px; font-weight: 800; color: var(--green); border-top: 1px solid #a7f3d0; padding-top: 8px; }
+  .btn-main {
+    width: 100%; background: var(--green); color: #fff; border: none;
+    padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 700;
+    margin-top: 12px; cursor: pointer;
+  }
+  .btn-blue { background: var(--primary); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: #fff; border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; }
+  .stat-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+  .stat-val { font-size: 20px; font-weight: 800; margin-top: 4px; }
+  .order-card { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
+  .order-card:last-child { border-bottom: none; }
+  .hidden { display: none !important; }
+  .toast-msg {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; z-index: 100; display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+<body>
 
-    <div class="container">
-      <div id="sec-sale">
-        <div class="card">
-          <div class="channel-switch">
-            <button
-              type="button"
-              id="ch-avito"
-              class="ch-btn active"
-              onclick="setChannel('avito')"
-            >
-              🚚 Авито Доставка
-            </button>
-            <button
-              type="button"
-              id="ch-pickup"
-              class="ch-btn"
-              onclick="setChannel('pickup')"
-            >
-              🤝 Самовывоз
-            </button>
-          </div>
-          <div class="search-wrap">
-            <label>Поиск товара (артикул или название)</label>
-            <input
-              type="text"
-              id="searchInp"
-              placeholder="Начни вводить..."
-              oninput="showSearch()"
-              onfocus="showSearch()"
-              autocomplete="off"
-            />
-            <div id="searchDrop" class="dropdown"></div>
-          </div>
-          <div id="cartList"></div>
-          <div class="row">
-            <div>
-              <label>Комиссия Авито (%)</label
-              ><input
-                type="number"
-                step="0.1"
-                id="commPct"
-                placeholder="0"
-                oninput="calcByPct()"
-              />
-            </div>
-            <div>
-              <label>Комиссия в рублях (₽)</label
-              ><input
-                type="number"
-                step="1"
-                id="commRub"
-                placeholder="Сумма ₽"
-                oninput="calcByRub()"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <label>Доставка с меня (₽)</label
-              ><input
-                type="number"
-                step="1"
-                id="delivRub"
-                placeholder="0"
-                oninput="recalcOrder()"
-              />
-            </div>
-            <div>
-              <label>Упаковка: зип/пупырка (₽)</label
-              ><input
-                type="number"
-                step="1"
-                id="packRub"
-                placeholder="0"
-                oninput="recalcOrder()"
-              />
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <label>Статус заказа</label
-              ><select id="ordStatus">
-                <option value="shipping">🚚 В доставке</option>
-                <option value="completed">✅ Деньги получены</option>
-              </select>
-            </div>
-            <div>
-              <label>Заметка (необязательно)</label
-              ><input type="text" id="ordNote" placeholder="ПВЗ / Имя" />
-            </div>
-          </div>
-          <div class="summary-box">
-            <div class="sum-grid">
-              <div>Выручка: <b id="sumRev">0 ₽</b></div>
-              <div>Закуп: <b id="sumBuy">0 ₽</b></div>
-              <div style="grid-column: span 2; color: var(--red)">
-                Удержания (ком. + дост. + упак.): <b id="sumFees">0 ₽</b>
-              </div>
-            </div>
-            <div class="profit-line">
-              Чистая прибыль: <span id="sumProfit">0 ₽</span>
-            </div>
-          </div>
-          <button class="btn-main" onclick="saveOrder()">
-            💾 Сохранить заказ
-          </button>
-        </div>
-      </div>
+<header>
+  <div class="header-top">
+    <div class="logo">📦 Авито Учет</div>
+    <div id="returnBadge" class="badge-return"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" id="t-sale" onclick="openTab('sale')">➕ Продажа</button>
+    <button class="tab-btn" id="t-stats" onclick="openTab('stats')">📊 Статистика</button>
+    <button class="tab-btn" id="t-prods" onclick="openTab('prods')">🏷️ Товары</button>
+  </div>
+</header>
 
-      <div id="sec-stats" class="hidden">
-        <div class="stats-grid">
-          <div
-            class="stat-card"
-            style="background: #059669; color: #fff; grid-column: span 2"
-          >
-            <div class="stat-title" style="color: #d1fae5">
-              Чистая прибыль на руки (за вычетом кликов и упаковки)
-            </div>
-            <div class="stat-val" id="stNet" style="font-size: 26px">0 ₽</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Прибыль со сделок</div>
-            <div class="stat-val" id="stGross" style="color: var(--primary)">
-              0 ₽
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Едет в доставке</div>
-            <div class="stat-val" id="stTransit" style="color: var(--amber)">
-              0 ₽
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Потрачено на клики</div>
-            <div class="stat-val" id="stClicks" style="color: var(--red)">
-              0 ₽
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Рулоны пупырки / Хоз</div>
-            <div class="stat-val" id="stExtra" style="color: var(--red)">
-              0 ₽
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <h2>Списать рулон пупырки / скотч / коробки</h2>
-          <div class="row">
-            <input
-              type="text"
-              id="expTitle"
-              placeholder="Напр: Пупырка 50м"
-            /><input type="number" id="expSum" placeholder="Сумма ₽" />
-          </div>
-          <button
-            class="btn-main btn-blue"
-            style="margin-top: 4px; padding: 10px"
-            onclick="addExpense()"
-          >
-            Списать расход
-          </button>
-        </div>
-        <div class="card">
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 10px;
-            "
-          >
-            <h2 style="margin: 0">История заказов</h2>
-            <div style="display: flex; gap: 6px">
-              <button
-                onclick="exportJson()"
-                style="
-                  padding: 6px 10px;
-                  border-radius: 8px;
-                  border: 1px solid #cbd5e1;
-                  background: #f8fafc;
-                  font-size: 12px;
-                "
-              >
-                ⬇️ Бэкап
-              </button>
-              <label
-                style="
-                  padding: 6px 10px;
-                  border-radius: 8px;
-                  border: 1px solid #cbd5e1;
-                  background: #f8fafc;
-                  font-size: 12px;
-                  margin: 0;
-                  cursor: pointer;
-                "
-                >⬆️ Загрузить
-                <input
-                  type="file"
-                  accept=".json"
-                  onchange="importJson(event)"
-                  style="display: none"
-              /></label>
-            </div>
-          </div>
-          <div id="ordersList"></div>
-        </div>
-      </div>
+<div id="toastBox" class="toast-msg"></div>
 
-      <div id="sec-prods" class="hidden">
-        <div class="card">
-          <h2 id="prodFormTitle">Добавить товар</h2>
-          <input type="hidden" id="editProdId" />
-          <div class="row">
-            <div>
-              <label>Артикул</label
-              ><input type="text" id="pSku" placeholder="К-01" />
-            </div>
-            <div>
-              <label>Название товара *</label
-              ><input type="text" id="pName" placeholder="Набор кастрюль" />
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <label>Закупочная цена (₽)</label
-              ><input type="number" id="pBuy" placeholder="1500" />
-            </div>
-            <div>
-              <label>Цена продажи (₽)</label
-              ><input type="number" id="pSell" placeholder="2800" />
-            </div>
-          </div>
-          <div class="row-3">
-            <div>
-              <label>Комиссия (%)</label
-              ><input type="number" step="0.1" id="pComm" placeholder="7" />
-            </div>
-            <div>
-              <label>Доставка (₽)</label
-              ><input type="number" id="pDeliv" placeholder="150" />
-            </div>
-            <div>
-              <label>Зип-пакет (₽)</label
-              ><input type="number" id="pPack" placeholder="15" />
-            </div>
-          </div>
-          <div>
-            <label>Цена за 1 клик / просмотр на Авито (₽)</label
-            ><input type="number" step="0.1" id="pCpc" placeholder="3.5" />
-          </div>
-          <button class="btn-main btn-blue" onclick="saveProduct()">
-            💾 Сохранить товар
-          </button>
-        </div>
-        <div class="card">
-          <h2>Мои товары и подсчет кликов</h2>
-          <div id="prodsList"></div>
-        </div>
+<div class="container">
+  <div id="sec-sale">
+    <div class="card">
+      <div class="channel-switch">
+        <button type="button" id="ch-avito" class="ch-btn active" onclick="setChannel('avito')">🚚 Авито Доставка</button>
+        <button type="button" id="ch-pickup" class="ch-btn" onclick="setChannel('pickup')">🤝 Самовывоз</button>
       </div>
+      <div class="search-wrap">
+        <label>Поиск товара (артикул или название)</label>
+        <input type="text" id="searchInp" placeholder="Начни вводить..." oninput="showSearch()" onfocus="showSearch()" autocomplete="off">
+        <div id="searchDrop" class="dropdown"></div>
+      </div>
+      <div id="cartList"></div>
+      <div class="row">
+        <div><label>Комиссия Авито (%)</label><input type="number" step="0.1" id="commPct" placeholder="0" oninput="calcByPct()"></div>
+        <div><label>Комиссия в рублях (₽)</label><input type="number" step="1" id="commRub" placeholder="Сумма ₽" oninput="calcByRub()"></div>
+      </div>
+      <div class="row">
+        <div><label>Доставка с меня (₽)</label><input type="number" step="1" id="delivRub" placeholder="0" oninput="recalcOrder()"></div>
+        <div><label>Упаковка: зип/пупырка (₽)</label><input type="number" step="1" id="packRub" placeholder="0" oninput="recalcOrder()"></div>
+      </div>
+      <div class="row">
+        <div><label>Статус заказа</label><select id="ordStatus"><option value="shipping">🚚 В доставке</option><option value="completed">✅ Деньги получены</option></select></div>
+        <div><label>Заметка (необязательно)</label><input type="text" id="ordNote" placeholder="ПВЗ / Имя"></div>
+      </div>
+      <div class="summary-box">
+        <div class="sum-grid">
+          <div>Выручка: <b id="sumRev">0 ₽</b></div>
+          <div>Закуп: <b id="sumBuy">0 ₽</b></div>
+          <div style="grid-column: span 2; color: var(--red);">Удержания (ком. + дост. + упак.): <b id="sumFees">0 ₽</b></div>
+        </div>
+        <div class="profit-line">Чистая прибыль: <span id="sumProfit">0 ₽</span></div>
+      </div>
+      <button class="btn-main" onclick="saveOrder()">💾 Сохранить заказ</button>
     </div>
+  </div>
 
-    <script>
-      let db = { products: [], orders: [], expenses: [] };
-      let cart = [];
-      let channel = 'avito';
+  <div id="sec-stats" class="hidden">
+    <div class="stats-grid">
+      <div class="stat-card" style="background:#059669; color:#fff; grid-column: span 2;"><div class="stat-title" style="color:#d1fae5;">Чистая прибыль на руки (за вычетом кликов и упаковки)</div><div class="stat-val" id="stNet" style="font-size:26px;">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Прибыль со сделок</div><div class="stat-val" id="stGross" style="color:var(--primary);">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Едет в доставке</div><div class="stat-val" id="stTransit" style="color:var(--amber);">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Потрачено на клики</div><div class="stat-val" id="stClicks" style="color:var(--red);">0 ₽</div></div>
+      <div class="stat-card"><div class="stat-title">Рулоны пупырки / Хоз</div><div class="stat-val" id="stExtra" style="color:var(--red);">0 ₽</div></div>
+    </div>
+    <div class="card">
+      <h2>Списать рулон пупырки / скотч / коробки</h2>
+      <div class="row"><input type="text" id="expTitle" placeholder="Напр: Пупырка 50м"><input type="number" id="expSum" placeholder="Сумма ₽"></div>
+      <button class="btn-main btn-blue" style="margin-top:4px; padding:10px;" onclick="addExpense()">Списать расход</button>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2 style="margin:0;">История заказов</h2>
+        <div style="display:flex; gap:6px;">
+          <button onclick="exportJson()" style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; font-size:12px; cursor:pointer;">⬇️ Бэкап</button>
+          <label style="padding:6px 10px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; font-size:12px; margin:0; cursor:pointer;">⬆️ Загрузить <input type="file" accept=".json" onchange="importJson(event)" style="display:none;"></label>
+        </div>
+      </div>
+      <div id="ordersList"></div>
+    </div>
+  </div>
 
-      function init() {
-        const raw = localStorage.getItem('avito_posuda_v2');
-        if (raw) {
-          try { db = JSON.parse(raw); } catch (e) { console.error('Не удалось прочитать сохранённую базу', e); }
+  <div id="sec-prods" class="hidden">
+    <div class="card">
+      <h2 id="prodFormTitle">Добавить товар</h2>
+      <input type="hidden" id="editProdId">
+      <div class="row">
+        <div><label>Артикул</label><input type="text" id="pSku" placeholder="К-01"></div>
+        <div><label>Название товара *</label><input type="text" id="pName" placeholder="Набор кастрюль"></div>
+      </div>
+      <div class="row">
+        <div><label>Закупочная цена (₽)</label><input type="number" id="pBuy" placeholder="1500"></div>
+        <div><label>Цена продажи (₽)</label><input type="number" id="pSell" placeholder="2800"></div>
+      </div>
+      <div class="row-3">
+        <div><label>Комиссия (%)</label><input type="number" step="0.1" id="pComm" placeholder="7"></div>
+        <div><label>Доставка (₽)</label><input type="number" id="pDeliv" placeholder="150"></div>
+        <div><label>Зип-пакет (₽)</label><input type="number" id="pPack" placeholder="15"></div>
+      </div>
+      <div><label>Цена за 1 клик / просмотр на Авито (₽)</label><input type="number" step="0.1" id="pCpc" placeholder="3.5"></div>
+      <button class="btn-main btn-blue" onclick="saveProduct()">💾 Сохранить товар</button>
+    </div>
+    <div class="card"><h2>Мои товары и подсчет кликов</h2><div id="prodsList"></div></div>
+  </div>
+</div>
+
+<script>
+  let db = { products: [], orders: [], expenses: [] };
+  let cart = [];
+  let channel = 'avito';
+
+  function showToast(msg) {
+    const box = document.getElementById('toastBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { box.style.display = 'none'; }, 2200);
+  }
+
+  function parseNum(val) {
+    if (val === undefined || val === null || val === '') return 0;
+    return Number(String(val).replace(',', '.')) || 0;
+  }
+
+  function init() {
+    const raw = localStorage.getItem('avito_posuda_v2');
+    if (raw) {
+      try { db = JSON.parse(raw); } catch (e) { console.error('Не удалось прочитать сохранённую базу', e); }
+    }
+    if (!db || !Array.isArray(db.products) || !Array.isArray(db.orders) || !Array.isArray(db.expenses)) {
+      db = { products: [], orders: [], expenses: [] };
+    }
+    if (!db.products.length && !localStorage.getItem('avito_posuda_v2')) {
+      db.products = [
+        { id: '1', sku: 'К-01', name: 'Набор кастрюль Royal Chef', buy: 3200, sell: 5500, comm: 7, deliv: 200, pack: 25, cpc: 4, views: 0, returned: 0 },
+        { id: '2', sku: 'СК-26', name: 'Сковорода 316 сталь 26 см', buy: 1400, sell: 2600, comm: 7, deliv: 150, pack: 15, cpc: 3, views: 0, returned: 0 }
+      ];
+    }
+    saveDb();
+    renderAll();
+  }
+
+  function saveDb() {
+    localStorage.setItem('avito_posuda_v2', JSON.stringify(db));
+    const retCount = db.products.reduce((s, p) => s + (p.returned || 0), 0);
+    const badge = document.getElementById('returnBadge');
+    if (retCount > 0) {
+      badge.style.display = 'block';
+      badge.textContent = 'На руках с возврата: ' + retCount + ' шт.';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  function openTab(t) {
+    ['sale', 'stats', 'prods'].forEach(x => {
+      document.getElementById('sec-' + x).classList.add('hidden');
+      document.getElementById('t-' + x).classList.remove('active');
+    });
+    document.getElementById('sec-' + t).classList.remove('hidden');
+    document.getElementById('t-' + t).classList.add('active');
+    renderAll();
+  }
+
+  function setChannel(ch) {
+    channel = ch;
+    document.getElementById('ch-avito').classList.toggle('active', ch === 'avito');
+    document.getElementById('ch-pickup').classList.toggle('active', ch === 'pickup');
+    document.getElementById('ordStatus').value = ch === 'avito' ? 'shipping' : 'completed';
+    if (ch === 'pickup') {
+      document.getElementById('commPct').value = '';
+      document.getElementById('commRub').value = '';
+      document.getElementById('delivRub').value = '';
+      recalcOrder();
+    } else {
+      fillDefaultFees();
+    }
+  }
+
+  function showSearch() {
+    const q = document.getElementById('searchInp').value.trim().toLowerCase();
+    const drop = document.getElementById('searchDrop');
+    const list = db.products.filter(p => (p.name || '').toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q)));
+    if (!list.length) {
+      drop.innerHTML = '<div style="padding:12px; color:#64748b;">Товар не найден</div>';
+    } else {
+      drop.innerHTML = list.map(p => `
+      <div class="drop-item" onclick="addToCart('${p.id}')">
+        <div><span class="sku-tag">${p.sku || '—'}</span><b>${p.name}</b>${p.returned > 0 ? `<span style="color:#d97706; font-size:12px;"> (На руках: ${p.returned})</span>` : ''}</div>
+        <div style="font-size:13px; color:#2563eb; font-weight:700;">${p.sell} ₽</div>
+      </div>`).join('');
+    }
+    drop.style.display = 'block';
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) {
+      document.getElementById('searchDrop').style.display = 'none';
+    }
+  });
+
+  function addToCart(id) {
+    const p = db.products.find(x => x.id === id);
+    if (!p) return;
+    const ex = cart.find(x => x.id === id);
+    if (ex) ex.qty += 1;
+    else cart.push({ id: p.id, sku: p.sku, name: p.name, qty: 1, buy: p.buy, sell: p.sell, pack: p.pack || 0, comm: p.comm || 0, deliv: p.deliv || 0 });
+    document.getElementById('searchInp').value = '';
+    document.getElementById('searchDrop').style.display = 'none';
+    renderCart();
+    fillDefaultFees();
+  }
+
+  function fillDefaultFees() {
+    const packSum = cart.reduce((s, i) => s + parseNum(i.pack) * i.qty, 0);
+    document.getElementById('packRub').value = packSum > 0 ? packSum : '';
+    if (channel === 'avito' && cart.length > 0) {
+      document.getElementById('commPct').value = cart[0].comm;
+      const maxDeliv = Math.max(...cart.map(i => parseNum(i.deliv)));
+      document.getElementById('delivRub').value = maxDeliv > 0 ? maxDeliv : '';
+      calcByPct();
+    } else {
+      recalcOrder();
+    }
+  }
+
+  function renderCart() {
+    const box = document.getElementById('cartList');
+    if (!cart.length) {
+      box.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:14px; border:1px dashed #cbd5e1; border-radius:10px; margin-bottom:12px;">Корзина заказа пуста</div>';
+      return;
+    }
+    box.innerHTML = cart.map((item, idx) => `
+      <div class="cart-item">
+        <div class="cart-head"><span><span class="sku-tag">${item.sku || '—'}</span>${item.name}</span><button class="btn-del" onclick="delCart(${idx})">✕</button></div>
+        <div class="row-3" style="margin-bottom:0;">
+          <div><label>Кол-во (шт)</label><input type="number" min="1" value="${item.qty}" oninput="updCart(${idx}, 'qty', this.value)"></div>
+          <div><label>Закуп 1 шт</label><input type="number" value="${item.buy}" oninput="updCart(${idx}, 'buy', this.value)"></div>
+          <div><label>Продажа 1 шт</label><input type="number" value="${item.sell}" oninput="updCart(${idx}, 'sell', this.value)"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  function updCart(idx, field, val) {
+    cart[idx][field] = parseNum(val);
+    if (field === 'qty') {
+      const packSum = cart.reduce((s, i) => s + parseNum(i.pack) * i.qty, 0);
+      document.getElementById('packRub').value = packSum > 0 ? packSum : '';
+    }
+    calcByPct();
+  }
+
+  function delCart(idx) { cart.splice(idx, 1); renderCart(); fillDefaultFees(); }
+  function getRev() { return cart.reduce((s, i) => s + i.sell * i.qty, 0); }
+  function getBuy() { return cart.reduce((s, i) => s + i.buy * i.qty, 0); }
+
+  function calcByPct() {
+    const pctVal = document.getElementById('commPct').value;
+    if (pctVal === '') { recalcOrder(); return; }
+    const rub = Math.round(getRev() * parseNum(pctVal) / 100);
+    document.getElementById('commRub').value = rub > 0 ? rub : (parseNum(pctVal) === 0 ? 0 : '');
+    recalcOrder();
+  }
+
+  function calcByRub() {
+    const rubVal = document.getElementById('commRub').value;
+    const rev = getRev();
+    if (rubVal === '') document.getElementById('commPct').value = '';
+    else if (rev > 0) document.getElementById('commPct').value = ((parseNum(rubVal) / rev) * 100).toFixed(1);
+    recalcOrder();
+  }
+
+  function recalcOrder() {
+    const rev = getRev(), buy = getBuy();
+    const comm = parseNum(document.getElementById('commRub').value);
+    const deliv = parseNum(document.getElementById('delivRub').value);
+    const pack = parseNum(document.getElementById('packRub').value);
+    document.getElementById('sumRev').textContent = rev + ' ₽';
+    document.getElementById('sumBuy').textContent = buy + ' ₽';
+    document.getElementById('sumFees').textContent = (comm + deliv + pack) + ' ₽';
+    document.getElementById('sumProfit').textContent = (rev - buy - comm - deliv - pack) + ' ₽';
+  }
+
+  function saveOrder() {
+    if (!cart.length) { showToast('Добавьте товар в заказ!'); return; }
+    const rev = getRev(), buy = getBuy();
+    const comm = parseNum(document.getElementById('commRub').value);
+    const deliv = parseNum(document.getElementById('delivRub').value);
+    const pack = parseNum(document.getElementById('packRub').value);
+    cart.forEach(item => {
+      const p = db.products.find(x => x.id === item.id);
+      if (p && p.returned > 0) p.returned = Math.max(0, p.returned - item.qty);
+    });
+    db.orders.unshift({
+      id: Date.now().toString(), date: new Date().toLocaleDateString('ru-RU'), channel,
+      status: document.getElementById('ordStatus').value, note: document.getElementById('ordNote').value.trim(),
+      items: JSON.parse(JSON.stringify(cart)), rev, buy, comm, deliv, pack, profit: rev - buy - comm - deliv - pack
+    });
+    cart = [];
+    document.getElementById('ordNote').value = '';
+    saveDb(); renderAll(); openTab('stats');
+  }
+
+  function setOrdStatus(id, st) {
+    const o = db.orders.find(x => x.id === id);
+    if (!o) return;
+    if (st === 'returned' && o.status !== 'returned') {
+      o.items.forEach(i => { const p = db.products.find(x => x.id === i.id); if (p) p.returned = (p.returned || 0) + i.qty; });
+    } else if (o.status === 'returned' && st !== 'returned') {
+      o.items.forEach(i => { const p = db.products.find(x => x.id === i.id); if (p) p.returned = Math.max(0, (p.returned || 0) - i.qty); });
+    }
+    o.status = st; saveDb(); renderAll();
+  }
+
+  function delOrder(id) {
+    db.orders = db.orders.filter(x => x.id !== id);
+    saveDb(); renderAll();
+    showToast('Заказ удален');
+  }
+
+  function addExpense() {
+    const title = document.getElementById('expTitle').value.trim() || 'Упаковка';
+    const sum = parseNum(document.getElementById('expSum').value);
+    if (sum <= 0) return;
+    db.expenses.push({ id: Date.now().toString(), title, sum });
+    document.getElementById('expTitle').value = '';
+    document.getElementById('expSum').value = '';
+    saveDb(); renderAll();
+    showToast('Расход списан');
+  }
+
+  function saveProduct() {
+    const id = document.getElementById('editProdId').value;
+    const sku = document.getElementById('pSku').value.trim();
+    const name = document.getElementById('pName').value.trim();
+    const buy = parseNum(document.getElementById('pBuy').value);
+    const sell = parseNum(document.getElementById('pSell').value);
+    const comm = parseNum(document.getElementById('pComm').value);
+    const deliv = parseNum(document.getElementById('pDeliv').value);
+    const pack = parseNum(document.getElementById('pPack').value);
+    const cpc = parseNum(document.getElementById('pCpc').value);
+    if (!name) { showToast('Введите название товара'); return; }
+    if (id) {
+      const p = db.products.find(x => x.id === id);
+      if (p) Object.assign(p, { sku, name, buy, sell, comm, deliv, pack, cpc });
+    } else {
+      db.products.push({ id: Date.now().toString(), sku, name, buy, sell, comm, deliv, pack, cpc, views: 0, returned: 0 });
+    }
+    ['editProdId','pSku','pName','pBuy','pSell','pComm','pDeliv','pPack','pCpc'].forEach(k => document.getElementById(k).value = '');
+    document.getElementById('prodFormTitle').textContent = 'Добавить товар';
+    saveDb(); renderAll();
+    showToast('Товар сохранен');
+  }
+
+  function editProd(id) {
+    const p = db.products.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('editProdId').value = p.id;
+    document.getElementById('pSku').value = p.sku || '';
+    document.getElementById('pName').value = p.name || '';
+    document.getElementById('pBuy').value = p.buy || 0;
+    document.getElementById('pSell').value = p.sell || 0;
+    document.getElementById('pComm').value = p.comm || 0;
+    document.getElementById('pDeliv').value = p.deliv || 0;
+    document.getElementById('pPack').value = p.pack || 0;
+    document.getElementById('pCpc').value = p.cpc || 0;
+    document.getElementById('prodFormTitle').textContent = 'Изменить товар';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function addViews(id, mode) {
+    const inp = document.getElementById('vAdd_' + id);
+    const rawVal = inp ? parseNum(inp.value) : 0;
+    // Если поле пустое, по нажатию + или - изменяем на 1 клик; если введено число — изменяем на это число
+    const delta = rawVal > 0 ? rawVal : 1;
+    const p = db.products.find(x => x.id === id);
+    if (p) {
+      if (mode === 'sub') {
+        p.views = Math.max(0, (p.views || 0) - delta);
+      } else {
+        p.views = Math.max(0, (p.views || 0) + delta);
+      }
+      if (inp) inp.value = '';
+      saveDb();
+      renderAll();
+    }
+  }
+
+  function renderAll() {
+    renderCart(); recalcOrder();
+    const comp = db.orders.filter(o => o.status === 'completed');
+    const ship = db.orders.filter(o => o.status === 'shipping');
+    const gross = comp.reduce((s, o) => s + parseNum(o.profit), 0);
+    const transit = ship.reduce((s, o) => s + parseNum(o.profit), 0);
+    const clicksCost = Math.round(db.products.reduce((s, p) => s + (p.views || 0) * parseNum(p.cpc), 0));
+    const extraCost = db.expenses.reduce((s, e) => s + parseNum(e.sum), 0);
+    document.getElementById('stGross').textContent = gross + ' ₽';
+    document.getElementById('stTransit').textContent = transit + ' ₽';
+    document.getElementById('stClicks').textContent = clicksCost + ' ₽';
+    document.getElementById('stExtra').textContent = extraCost + ' ₽';
+    document.getElementById('stNet').textContent = (gross - clicksCost - extraCost) + ' ₽';
+
+    const oList = document.getElementById('ordersList');
+    oList.innerHTML = db.orders.length ? db.orders.map(o => `
+      <div class="order-card">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span><b>${o.date}</b> • ${o.channel === 'avito' ? '🚚 Авито' : '🤝 Самовывоз'} ${o.note ? '(' + o.note + ')' : ''}</span>
+          <b style="color:var(--green); font-size:16px;">${o.profit >= 0 ? '+' : ''}${o.profit} ₽</b>
+        </div>
+        <div style="font-size:13px; margin-bottom:6px;">${o.items.map(i => `${i.name} ×${i.qty} шт.`).join(', ')}</div>
+        <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">Продажа: ${o.rev} ₽ | Закуп: ${o.buy} ₽ | Ком: ${o.comm} ₽ | Дост: ${o.deliv} ₽ | Упак: ${o.pack} ₽</div>
+        <div style="display:flex; gap:8px;">
+          <select onchange="setOrdStatus('${o.id}', this.value)" style="padding:6px; font-size:13px;">
+            <option value="shipping" ${o.status==='shipping'?'selected':''}>🚚 В доставке</option>
+            <option value="completed" ${o.status==='completed'?'selected':''}>✅ Завершен</option>
+            <option value="returned" ${o.status==='returned'?'selected':''}>↩️ Возврат (На руках)</option>
+          </select>
+          <button onclick="delOrder('${o.id}')" style="border:1px solid #fca5a5; background:#fef2f2; color:#dc2626; border-radius:8px; padding:0 12px; font-size:12px; cursor:pointer;">Удалить</button>
+        </div>
+      </div>`).join('') : '<div style="color:#94a3b8; text-align:center;">Заказов пока нет</div>';
+
+    const pList = document.getElementById('prodsList');
+    pList.innerHTML = db.products.map(p => `
+      <div class="order-card">
+        <div style="display:flex; justify-content:space-between;">
+          <div><span class="sku-tag">${p.sku || '—'}</span><b>${p.name}</b></div>
+          <button onclick="editProd('${p.id}')" style="border:none; background:none; color:var(--primary); font-weight:600; cursor:pointer;">Изменить</button>
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin:6px 0;">Закуп: <b>${p.buy} ₽</b> | Продажа: <b>${p.sell} ₽</b> | Клик: <b>${p.cpc} ₽</b></div>
+        <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+          <span style="font-size:12px; min-width:115px;">Кликов: <b>${p.views||0}</b> (${Math.round((p.views||0)*parseNum(p.cpc))} ₽)</span>
+          <input type="number" id="vAdd_${p.id}" placeholder="Кол-во" style="width:80px; padding:6px; font-size:14px;">
+          <button onclick="addViews('${p.id}', 'sub')" style="background:#dc2626; color:#fff; border:none; border-radius:8px; padding:7px 12px; font-weight:700; cursor:pointer;" title="Уменьшить клики">−</button>
+          <button onclick="addViews('${p.id}', 'add')" style="background:var(--primary); color:#fff; border:none; border-radius:8px; padding:7px 12px; font-weight:700; cursor:pointer;" title="Добавить клики">+</button>
+        </div>
+      </div>`).join('') || '<div style="color:#94a3b8;text-align:center;">Товаров пока нет</div>';
+  }
+
+  function exportJson() {
+    const a = document.createElement('a');
+    a.href = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
+    a.download = "avito_backup.json";
+    a.click();
+  }
+
+  function importJson(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      try {
+        const loaded = JSON.parse(ev.target.result);
+        if (!loaded || !Array.isArray(loaded.products) || !Array.isArray(loaded.orders) || !Array.isArray(loaded.expenses)) {
+          throw new Error('Неверный формат файла');
         }
-        if (!db || !Array.isArray(db.products) || !Array.isArray(db.orders) || !Array.isArray(db.expenses)) {
-          db = { products: [], orders: [], expenses: [] };
-        }
-        if (!db.products.length && !localStorage.getItem('avito_posuda_v2')) {
-          db.products = [
-            { id: '1', sku: 'К-01', name: 'Набор кастрюль Royal Chef', buy: 3200, sell: 5500, comm: 7, deliv: 200, pack: 25, cpc: 4, views: 0, returned: 0 },
-            { id: '2', sku: 'СК-26', name: 'Сковорода 316 сталь 26 см', buy: 1400, sell: 2600, comm: 7, deliv: 150, pack: 15, cpc: 3, views: 0, returned: 0 }
-          ];
-        }
+        db = loaded;
         saveDb();
         renderAll();
+        showToast('База успешно загружена!');
+      } catch (err) {
+        showToast('Ошибка загрузки файла');
+      } finally {
+        e.target.value = '';
       }
+    };
+    r.readAsText(f);
+  }
 
-      function saveDb() {
-        localStorage.setItem('avito_posuda_v2', JSON.stringify(db));
-        const retCount = db.products.reduce((s, p) => s + (p.returned || 0), 0);
-        const badge = document.getElementById('returnBadge');
-        if (retCount > 0) {
-          badge.style.display = 'block';
-          badge.textContent = 'На руках с возврата: ' + retCount + ' шт.';
-        } else badge.style.display = 'none';
-      }
-
-      function openTab(t) {
-        ['sale', 'stats', 'prods'].forEach(x => {
-          document.getElementById('sec-' + x).classList.add('hidden');
-          document.getElementById('t-' + x).classList.remove('active');
-        });
-        document.getElementById('sec-' + t).classList.remove('hidden');
-        document.getElementById('t-' + t).classList.add('active');
-        renderAll();
-      }
-
-      function setChannel(ch) {
-        channel = ch;
-        document.getElementById('ch-avito').classList.toggle('active', ch === 'avito');
-        document.getElementById('ch-pickup').classList.toggle('active', ch === 'pickup');
-        document.getElementById('ordStatus').value = ch === 'avito' ? 'shipping' : 'completed';
-        if (ch === 'pickup') {
-          document.getElementById('commPct').value = '';
-          document.getElementById('commRub').value = '';
-          document.getElementById('delivRub').value = '';
-          recalcOrder();
-        } else fillDefaultFees();
-      }
-
-      function showSearch() {
-        const q = document.getElementById('searchInp').value.trim().toLowerCase();
-        const drop = document.getElementById('searchDrop');
-        const list = db.products.filter(p => (p.name || '').toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q)));
-        if (!list.length) drop.innerHTML = '<div style="padding:12px; color:#64748b;">Товар не найден</div>';
-        else drop.innerHTML = list.map(p => `
-          <div class="drop-item" onclick="addToCart('${p.id}')">
-            <div><span class="sku-tag">${p.sku || '—'}</span><b>${p.name}</b>${p.returned > 0 ? `<span style="color:#d97706; font-size:12px;"> (На руках: ${p.returned})</span>` : ''}</div>
-            <div style="font-size:13px; color:#2563eb; font-weight:700;">${p.sell} ₽</div>
-          </div>`).join('');
-        drop.style.display = 'block';
-      }
-
-      document.addEventListener('click', e => {
-        if (!e.target.closest('.search-wrap')) document.getElementById('searchDrop').style.display = 'none';
-      });
-
-      function addToCart(id) {
-        const p = db.products.find(x => x.id === id);
-        if (!p) return;
-        const ex = cart.find(x => x.id === id);
-        if (ex) ex.qty += 1;
-        else cart.push({ id: p.id, sku: p.sku, name: p.name, qty: 1, buy: p.buy, sell: p.sell, pack: p.pack || 0, comm: p.comm || 0, deliv: p.deliv || 0 });
-        document.getElementById('searchInp').value = '';
-        document.getElementById('searchDrop').style.display = 'none';
-        renderCart();
-        fillDefaultFees();
-      }
-
-      function fillDefaultFees() {
-        const packSum = cart.reduce((s, i) => s + (Number(i.pack) || 0) * i.qty, 0);
-        document.getElementById('packRub').value = packSum > 0 ? packSum : '';
-        if (channel === 'avito' && cart.length > 0) {
-          document.getElementById('commPct').value = cart[0].comm;
-          const maxDeliv = Math.max(...cart.map(i => Number(i.deliv) || 0));
-          document.getElementById('delivRub').value = maxDeliv > 0 ? maxDeliv : '';
-          calcByPct();
-        } else recalcOrder();
-      }
-
-      function renderCart() {
-        const box = document.getElementById('cartList');
-        if (!cart.length) {
-          box.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:14px; border:1px dashed #cbd5e1; border-radius:10px; margin-bottom:12px;">Корзина заказа пуста</div>';
-          return;
-        }
-        box.innerHTML = cart.map((item, idx) => `
-          <div class="cart-item">
-            <div class="cart-head"><span><span class="sku-tag">${item.sku || '—'}</span>${item.name}</span><button class="btn-del" onclick="delCart(${idx})">✕</button></div>
-            <div class="row-3" style="margin-bottom:0;">
-              <div><label>Кол-во (шт)</label><input type="number" min="1" value="${item.qty}" oninput="updCart(${idx}, 'qty', this.value)"></div>
-              <div><label>Закуп 1 шт</label><input type="number" value="${item.buy}" oninput="updCart(${idx}, 'buy', this.value)"></div>
-              <div><label>Продажа 1 шт</label><input type="number" value="${item.sell}" oninput="updCart(${idx}, 'sell', this.value)"></div>
-            </div>
-          </div>`).join('');
-      }
-
-      function updCart(idx, field, val) {
-        cart[idx][field] = Number(val) || 0;
-        if (field === 'qty') {
-          const packSum = cart.reduce((s, i) => s + (Number(i.pack) || 0) * i.qty, 0);
-          document.getElementById('packRub').value = packSum > 0 ? packSum : '';
-        }
-        calcByPct();
-      }
-
-      function delCart(idx) { cart.splice(idx, 1); renderCart(); fillDefaultFees(); }
-      function getRev() { return cart.reduce((s, i) => s + i.sell * i.qty, 0); }
-      function getBuy() { return cart.reduce((s, i) => s + i.buy * i.qty, 0); }
-
-      function calcByPct() {
-        const pctVal = document.getElementById('commPct').value;
-        if (pctVal === '') { recalcOrder(); return; }
-        const rub = Math.round(getRev() * (Number(pctVal) || 0) / 100);
-        document.getElementById('commRub').value = rub > 0 ? rub : (Number(pctVal) === 0 ? 0 : '');
-        recalcOrder();
-      }
-
-      function calcByRub() {
-        const rubVal = document.getElementById('commRub').value;
-        const rev = getRev();
-        if (rubVal === '') document.getElementById('commPct').value = '';
-        else if (rev > 0) document.getElementById('commPct').value = ((Number(rubVal) / rev) * 100).toFixed(1);
-        recalcOrder();
-      }
-
-      function recalcOrder() {
-        const rev = getRev(), buy = getBuy();
-        const comm = Number(document.getElementById('commRub').value) || 0;
-        const deliv = Number(document.getElementById('delivRub').value) || 0;
-        const pack = Number(document.getElementById('packRub').value) || 0;
-        document.getElementById('sumRev').textContent = rev + ' ₽';
-        document.getElementById('sumBuy').textContent = buy + ' ₽';
-        document.getElementById('sumFees').textContent = (comm + deliv + pack) + ' ₽';
-        document.getElementById('sumProfit').textContent = (rev - buy - comm - deliv - pack) + ' ₽';
-      }
-
-      function saveOrder() {
-        if (!cart.length) return alert('Добавь товар в заказ!');
-        const rev = getRev(), buy = getBuy();
-        const comm = Number(document.getElementById('commRub').value) || 0;
-        const deliv = Number(document.getElementById('delivRub').value) || 0;
-        const pack = Number(document.getElementById('packRub').value) || 0;
-        cart.forEach(item => {
-          const p = db.products.find(x => x.id === item.id);
-          if (p && p.returned > 0) p.returned = Math.max(0, p.returned - item.qty);
-        });
-        db.orders.unshift({
-          id: Date.now().toString(), date: new Date().toLocaleDateString('ru-RU'), channel,
-          status: document.getElementById('ordStatus').value, note: document.getElementById('ordNote').value.trim(),
-          items: JSON.parse(JSON.stringify(cart)), rev, buy, comm, deliv, pack, profit: rev - buy - comm - deliv - pack
-        });
-        cart = [];
-        document.getElementById('ordNote').value = '';
-        saveDb(); renderAll(); openTab('stats');
-      }
-
-      function setOrdStatus(id, st) {
-        const o = db.orders.find(x => x.id === id);
-        if (!o) return;
-        if (st === 'returned' && o.status !== 'returned') {
-          o.items.forEach(i => { const p = db.products.find(x => x.id === i.id); if (p) p.returned = (p.returned || 0) + i.qty; });
-        } else if (o.status === 'returned' && st !== 'returned') {
-          o.items.forEach(i => { const p = db.products.find(x => x.id === i.id); if (p) p.returned = Math.max(0, (p.returned || 0) - i.qty); });
-        }
-        o.status = st; saveDb(); renderAll();
-      }
-
-      function delOrder(id) {
-        if (!confirm('Удалить заказ?')) return;
-        db.orders = db.orders.filter(x => x.id !== id); saveDb(); renderAll();
-      }
-
-      function addExpense() {
-        const title = document.getElementById('expTitle').value.trim() || 'Упаковка';
-        const sum = Number(document.getElementById('expSum').value) || 0;
-        if (sum <= 0) return;
-        db.expenses.push({ id: Date.now().toString(), title, sum });
-        document.getElementById('expTitle').value = '';
-        document.getElementById('expSum').value = '';
-        saveDb(); renderAll();
-      }
-
-      function saveProduct() {
-        const id = document.getElementById('editProdId').value;
-        const sku = document.getElementById('pSku').value.trim();
-        const name = document.getElementById('pName').value.trim();
-        const buy = Number(document.getElementById('pBuy').value) || 0;
-        const sell = Number(document.getElementById('pSell').value) || 0;
-        const comm = Number(document.getElementById('pComm').value) || 0;
-        const deliv = Number(document.getElementById('pDeliv').value) || 0;
-        const pack = Number(document.getElementById('pPack').value) || 0;
-        const cpc = Number(document.getElementById('pCpc').value) || 0;
-        if (!name) return alert('Введи название товара');
-        if (id) {
-          const p = db.products.find(x => x.id === id);
-          if (p) Object.assign(p, { sku, name, buy, sell, comm, deliv, pack, cpc });
-        } else db.products.push({ id: Date.now().toString(), sku, name, buy, sell, comm, deliv, pack, cpc, views: 0, returned: 0 });
-        ['editProdId','pSku','pName','pBuy','pSell','pComm','pDeliv','pPack','pCpc'].forEach(k => document.getElementById(k).value = '');
-        document.getElementById('prodFormTitle').textContent = 'Добавить товар';
-        saveDb(); renderAll();
-      }
-
-      function editProd(id) {
-        const p = db.products.find(x => x.id === id);
-        if (!p) return;
-        document.getElementById('editProdId').value = p.id;
-        document.getElementById('pSku').value = p.sku || '';
-        document.getElementById('pName').value = p.name || '';
-        document.getElementById('pBuy').value = p.buy || 0;
-        document.getElementById('pSell').value = p.sell || 0;
-        document.getElementById('pComm').value = p.comm || 0;
-        document.getElementById('pDeliv').value = p.deliv || 0;
-        document.getElementById('pPack').value = p.pack || 0;
-        document.getElementById('pCpc').value = p.cpc || 0;
-        document.getElementById('prodFormTitle').textContent = 'Изменить товар';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-
-      function addViews(id, mode) {
-        const inp = document.getElementById('vAdd_' + id), val = Number(inp.value) || 0;
-        const p = db.products.find(x => x.id === id);
-        if (p && val !== 0) {
-          if (mode === 'sub') {
-            p.views = Math.max(0, (p.views || 0) - val);
-          } else {
-            p.views = Math.max(0, (p.views || 0) + val);
-          }
-          inp.value = '';
-          saveDb();
-          renderAll();
-        }
-      }
-
-      function renderAll() {
-        renderCart(); recalcOrder();
-        const comp = db.orders.filter(o => o.status === 'completed');
-        const ship = db.orders.filter(o => o.status === 'shipping');
-        const gross = comp.reduce((s, o) => s + (Number(o.profit) || 0), 0);
-        const transit = ship.reduce((s, o) => s + (Number(o.profit) || 0), 0);
-        const clicksCost = Math.round(db.products.reduce((s, p) => s + (p.views || 0) * (p.cpc || 0), 0));
-        const extraCost = db.expenses.reduce((s, e) => s + (Number(e.sum) || 0), 0);
-        document.getElementById('stGross').textContent = gross + ' ₽';
-        document.getElementById('stTransit').textContent = transit + ' ₽';
-        document.getElementById('stClicks').textContent = clicksCost + ' ₽';
-        document.getElementById('stExtra').textContent = extraCost + ' ₽';
-        document.getElementById('stNet').textContent = (gross - clicksCost - extraCost) + ' ₽';
-
-        const oList = document.getElementById('ordersList');
-        oList.innerHTML = db.orders.length ? db.orders.map(o => `
-          <div class="order-card">
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-              <span><b>${o.date}</b> • ${o.channel === 'avito' ? '🚚 Авито' : '🤝 Самовывоз'} ${o.note ? '(' + o.note + ')' : ''}</span>
-              <b style="color:var(--green); font-size:16px;">${o.profit >= 0 ? '+' : ''}${o.profit} ₽</b>
-            </div>
-            <div style="font-size:13px; margin-bottom:6px;">${o.items.map(i => `${i.name} ×${i.qty} шт.`).join(', ')}</div>
-            <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">Продажа: ${o.rev} ₽ | Закуп: ${o.buy} ₽ | Ком: ${o.comm} ₽ | Дост: ${o.deliv} ₽ | Упак: ${o.pack} ₽</div>
-            <div style="display:flex; gap:8px;">
-              <select onchange="setOrdStatus('${o.id}', this.value)" style="padding:6px; font-size:13px;">
-                <option value="shipping" ${o.status==='shipping'?'selected':''}>🚚 В доставке</option>
-                <option value="completed" ${o.status==='completed'?'selected':''}>✅ Завершен</option>
-                <option value="returned" ${o.status==='returned'?'selected':''}>↩️ Возврат (На руках)</option>
-              </select>
-              <button onclick="delOrder('${o.id}')" style="border:1px solid #fca5a5; background:#fef2f2; color:#dc2626; border-radius:8px; padding:0 12px; font-size:12px;">Удалить</button>
-            </div>
-          </div>`).join('') : '<div style="color:#94a3b8; text-align:center;">Заказов пока нет</div>';
-
-        const pList = document.getElementById('prodsList');
-        pList.innerHTML = db.products.map(p => `
-          <div class="order-card">
-            <div style="display:flex; justify-content:space-between;">
-              <div><span class="sku-tag">${p.sku || '—'}</span><b>${p.name}</b></div>
-              <button onclick="editProd('${p.id}')" style="border:none; background:none; color:var(--primary); font-weight:600;">Изменить</button>
-            </div>
-            <div style="font-size:12px; color:var(--muted); margin:6px 0;">Закуп: <b>${p.buy} ₽</b> | Продажа: <b>${p.sell} ₽</b> | Клик: <b>${p.cpc} ₽</b></div>
-            <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
-              <span style="font-size:12px; min-width:110px;">Кликов: <b>${p.views||0}</b> (${Math.round((p.views||0)*(p.cpc||0))} ₽)</span>
-              <input type="number" id="vAdd_${p.id}" placeholder="+ / -" style="width:75px; padding:6px; font-size:14px;">
-              <button onclick="addViews('${p.id}', 'sub')" style="background:#dc2626; color:#fff; border:none; border-radius:8px; padding:7px 10px; font-weight:700;" title="Уменьшить клики">−</button>
-              <button onclick="addViews('${p.id}', 'add')" style="background:var(--primary); color:#fff; border:none; border-radius:8px; padding:7px 10px; font-weight:700;" title="Добавить клики">+</button>
-            </div>
-          </div>`).join('') || '<div style="color:#94a3b8;text-align:center;">Товаров пока нет</div>';
-      }
-
-      function exportJson() {
-        const a = document.createElement('a');
-        a.href = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-        a.download = "avito_backup.json";
-        a.click();
-      }
-
-      function importJson(e) {
-        .r = new FileReader(); // wait, make sure valid JS reader
-      }
-
-      // Correction for import reader inside script:
-      // let r = new FileReader(); r.onload = ...
-    </script>
-  </body>
+  init();
+</script>
+</body>
 </html>
